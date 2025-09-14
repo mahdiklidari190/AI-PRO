@@ -184,7 +184,6 @@
       userInput.value = "";
 
       typingIndicator.style.display = "flex";
-
       const response = await fetch("https://api.gapgpt.app/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -201,12 +200,9 @@
       typingIndicator.style.display = "none";
 
       let reply = data.choices[0].message.content;
-
-      // Override identity questions
       const lastUserMsg = messages[messages.length - 1].content.toLowerCase();
-      if (
-        /تو چی هستی|چه مدلی هستی|کی ساختت|چه هوش مصنوعی هستی/.test(lastUserMsg)
-      ) {
+
+      if (/تو چی هستی|چه مدلی هستی|کی ساختت|چه هوش مصنوعی هستی/.test(lastUserMsg)) {
         reply = "من هوش مصنوعی BK AI هستم، یک سیستم تازه‌ساخته‌شده توسط مهدی کلیدری.";
       }
       if (/چطور با سازنده ارتباط بگیرم|سازنده‌ات کیه|شماره سازنده/.test(lastUserMsg)) {
@@ -217,8 +213,45 @@
       messages.push({ role: "assistant", content: "", time: timeReply });
       renderMessages();
 
-      // Typing effect
       let i = 0;
       const interval = setInterval(() => {
         if (i < reply.length) {
-          messages[messages.length - 1].
+          messages[messages.length - 1].content += reply[i];
+          renderMessages();
+          i++;
+        } else {
+          clearInterval(interval);
+          saveChat();
+        }
+      }, 30);
+    }
+
+    function saveChat() {
+      localStorage.setItem("chat-" + chatId, JSON.stringify(messages));
+    }
+
+    function newChat() {
+      chatId = Date.now().toString();
+      messages = [];
+      renderMessages();
+    }
+
+    function toggleHistory() {
+      chatHistory.style.display = chatHistory.style.display === "none" ? "block" : "none";
+      chatHistory.innerHTML = "";
+
+      Object.keys(localStorage).filter(k => k.startsWith("chat-")).forEach(key => {
+        const btn = document.createElement("button");
+        btn.textContent = "چت #" + key.split("-")[1];
+        btn.onclick = () => {
+          messages = JSON.parse(localStorage.getItem(key));
+          chatId = key.split("-")[1];
+          renderMessages();
+          chatHistory.style.display = "none";
+        };
+        chatHistory.appendChild(btn);
+      });
+    }
+  </script>
+</body>
+</html>
