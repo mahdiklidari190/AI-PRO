@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>BK-AI Chat</title>
   <style>
     body {
@@ -51,6 +50,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       width: 220px;
       z-index: 1000;
+      transition: opacity 0.2s ease;
       color: #111;
     }
     #contactPanel p {
@@ -68,8 +68,8 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-    #contactPanel button:hover {
-      background: #0284c7;
+    #contactPanel button.copied {
+      background: #22c55e !important;
     }
     .container {
       max-width: 800px;
@@ -124,6 +124,7 @@
       position: absolute;
       bottom: -1.2rem;
       left: 0.75rem;
+      transition: color 0.3s ease;
     }
     .copy-btn.copied {
       color: #22c55e;
@@ -211,17 +212,13 @@
 </head>
 <body>
   <div class="header">
-    BK-AI
+    🤖 BK-AI
     <div class="contact-wrapper">
-      <button class="contact-btn" onclick="toggleContactPanel()">ارتباط</button>
+      <button class="contact-btn" onclick="toggleContactPanel()">ارتباط با سازنده سایت</button>
       <div id="contactPanel">
-        <p>اسم: <strong>مهدی کلیدری</strong></p>
-        <p>شماره تماس: <strong>09211243320</strong>
-          <button onclick="callNumber('09211243320')">تماس</button>
-        </p>
-        <p>آیدی تلگرام : @BK_1ir
-          <button onclick="copyText(this, '@BK_1ir')">کپی</button>
-        </p>
+        <p>👤 <strong>مهدی کلیدری</strong></p>
+        <p>📱 09211243320 <button onclick="copyText(this, '09211243320')">کپی</button></p>
+        <p>💬 @BK_1ir <button onclick="copyText(this, '@BK_1ir')">کپی</button></p>
       </div>
     </div>
   </div>
@@ -235,37 +232,153 @@
       <button onclick="toggleHistory()">چت‌های قبلی</button>
     </div>
 
-const chatBox = document.getElementById('chatBox'); const userInput = document.getElementById('userInput'); const modelSelect = document.getElementById('model'); const typingIndicator = document.getElementById('typingIndicator'); const chatHistory = document.getElementById('chatHistory'); const contactPanel = document.getElementById('contactPanel'); const sendBtn = document.querySelector('.send-btn');
+    <div class="chat-box" id="chatBox"></div>
+    <div class="typing" id="typingIndicator" style="display:none;">
+      <div class="dots"><span>.</span><span>.</span><span>.</span></div>
+      <span>در حال نوشتن...</span>
+    </div>
 
-let messages = []; let chatId = Date.now().toString(); let typingInterval = null; let stopTyping = false;
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="پیام خود را بنویسید..." />
+      <button class="send-btn" onclick="sendMessage()">ارسال</button>
+    </div>
 
-const formatTime = () => { const now = new Date(); return now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }); };
+    <div class="chat-history" id="chatHistory">
+      <h3>چت‌های قبلی</h3>
+    </div>
+    <script>
+  const chatBox = document.getElementById('chatBox');
+  const userInput = document.getElementById('userInput');
+  const modelSelect = document.getElementById('model');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const chatHistory = document.getElementById('chatHistory');
+  const contactPanel = document.getElementById('contactPanel');
 
-const renderMessages = () => { const isAtBottom = chatBox.scrollTop + chatBox.clientHeight >= chatBox.scrollHeight - 50; chatBox.innerHTML = "";
+  let messages = [];
+  let chatId = Date.now().toString();
 
-};
+  function formatTime() {
+    const now = new Date();
+    return now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+  }
 
-const sendMessage = async () => { const content = userInput.value.trim(); if (!content) return;
+  function renderMessages() {
+    chatBox.innerHTML = "";
+    messages.forEach((msg) => {
+      const div = document.createElement("div");
+      div.className = "message " + (msg.role === "user" ? "user" : "assistant");
+      div.textContent = msg.content;
 
-};
+      const time = document.createElement("div");
+      time.className = "timestamp";
+      time.textContent = msg.time;
+      div.appendChild(time);
 
-const stopMessage = () => { stopTyping = true; };
+      if (msg.role === "assistant") {
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.textContent = "کپی";
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(msg.content);
+          copyBtn.classList.add("copied");
+          setTimeout(() => copyBtn.classList.remove("copied"), 1000);
+        };
+        div.appendChild(copyBtn);
+      }
 
-const saveChat = () => { const title = messages.find(m => m.role === "user")?.content?.slice(0, 30) || "بدون عنوان"; localStorage.setItem("chat-" + chatId, JSON.stringify({ title, messages })); };
+      chatBox.appendChild(div);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 
-const newChat = () => { chatId = Date.now().toString(); messages = []; renderMessages(); };
+  async function sendMessage() {
+    const content = userInput.value.trim();
+    if (!content) return;
 
-const toggleHistory = () => { chatHistory.style.display = chatHistory.style.display === "none" ? "block" : "none"; chatHistory.innerHTML = "<h3>چت‌های قبلی</h3>";
+    const time = formatTime();
+    messages.push({ role: "user", content, time });
+    renderMessages();
+    userInput.value = "";
 
-};
+    typingIndicator.style.display = "flex";
 
-const toggleContactPanel = () => { contactPanel.style.display = contactPanel.style.display === "none" ? "block" : "none"; };
+    const response = await fetch("https://api.gapgpt.app/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-S5rOGsclcKTN9vdMMsx3fZ1bYXALVqBV0z8WebUcX668zia4"
+      },
+      body: JSON.stringify({
+        model: modelSelect.value,
+        messages: messages
+      })
+    });
 
-const copyText = (btn, text) => { navigator.clipboard.writeText(text); btn.classList.add("copied"); setTimeout(() => btn.classList.remove("copied"), 1000); };
+    const data = await response.json();
+    typingIndicator.style.display = "none";
 
-const callNumber = (number) => { window.location.href = tel:${number}; };
+    let reply = data.choices[0].message.content;
+    const timeReply = formatTime();
+    messages.push({ role: "assistant", content: "", time: timeReply });
+    renderMessages();
 
-chatBox.addEventListener("click", () => { contactPanel.style.display = "none"; }); </script>
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < reply.length) {
+        messages[messages.length - 1].content += reply[i];
+        renderMessages();
+        i++;
+      } else {
+        clearInterval(interval);
+        saveChat();
+      }
+    }, 30);
+  }
 
+  function saveChat() {
+    const title = messages.find(m => m.role === "user")?.content?.slice(0, 30) || "بدون عنوان";
+    localStorage.setItem("chat-" + chatId, JSON.stringify({ title, messages }));
+  }
+
+  function newChat() {
+    chatId = Date.now().toString();
+    messages = [];
+    renderMessages();
+  }
+
+  function toggleHistory() {
+    chatHistory.style.display = chatHistory.style.display === "none" ? "block" : "none";
+    chatHistory.innerHTML = "<h3>چت‌های قبلی</h3>";
+
+    Object.keys(localStorage)
+      .filter(k => k.startsWith("chat-"))
+      .forEach(key => {
+        const data = JSON.parse(localStorage.getItem(key));
+        const btn = document.createElement("button");
+        btn.textContent = data.title || "چت بدون عنوان";
+        btn.onclick = () => {
+          messages = data.messages;
+          chatId = key.split("-")[1];
+          renderMessages();
+          chatHistory.style.display = "none";
+        };
+        chatHistory.appendChild(btn);
+      });
+  }
+
+  function toggleContactPanel() {
+    contactPanel.style.display = contactPanel.style.display === "none" ? "block" : "none";
+  }
+
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text);
+    btn.classList.add("copied");
+    setTimeout(() => btn.classList.remove("copied"), 1000);
+  }
+
+  chatBox.addEventListener("click", () => {
+    contactPanel.style.display = "none";
+  });
+</script>
 </body>
 </html>
