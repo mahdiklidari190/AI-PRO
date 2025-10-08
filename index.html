@@ -30,7 +30,7 @@
       transform: scale(1.1);
     }
 
-    /* ظرف چت */
+    /* پنل چت */
     #chatContainer {
       display: none;
       position: fixed;
@@ -171,14 +171,22 @@
     let typingInterval = null;
     let stopTyping = false;
 
+    function isMobile() {
+      return window.innerWidth <= 768;
+    }
+
     function openChat() {
       chatContainer.style.display = 'flex';
-      chatToggleBtn.style.display = 'none';
+      if (isMobile()) {
+        chatToggleBtn.style.display = 'none';
+      }
     }
 
     function closeChat() {
       chatContainer.style.display = 'none';
-      chatToggleBtn.style.display = 'block';
+      if (isMobile()) {
+        chatToggleBtn.style.display = 'block';
+      }
     }
 
     const renderMessages = () => {
