@@ -18,7 +18,7 @@
       right: 20px;
       width: 70px;
       height: 70px;
-      background-color: #8b5cf6; /* بنفش */
+      background-color: #8b5cf6;
       border: none;
       border-radius: 50%;
       cursor: pointer;
@@ -31,7 +31,7 @@
     }
 
     .chat-toggle-btn:hover {
-      background-color: #22c55e; /* سبز */
+      background-color: #22c55e;
     }
 
     .chat-toggle-btn img {
@@ -160,6 +160,7 @@
       max-width: 80%;
       line-height: 1.6;
       white-space: pre-wrap;
+      position: relative;
     }
 
     .user {
@@ -170,6 +171,18 @@
     .assistant {
       background: #f3f4f6;
       margin-right: auto;
+    }
+
+    .msg-time {
+      display: block;
+      text-align: right;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    .user .msg-time {
+      text-align: left;
     }
 
     .input-area {
@@ -281,7 +294,18 @@
       messages.forEach((msg) => {
         const div = document.createElement("div");
         div.className = "message " + (msg.role === "user" ? "user" : "assistant");
-        div.textContent = msg.content;
+
+        const text = document.createElement("div");
+        text.textContent = msg.content;
+        div.appendChild(text);
+
+        if (msg.time) {
+          const time = document.createElement("span");
+          time.className = "msg-time";
+          time.textContent = msg.time;
+          div.appendChild(time);
+        }
+
         chatBox.appendChild(div);
       });
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -291,7 +315,10 @@
       const content = userInput.value.trim();
       if (!content) return;
 
-      messages.push({ role: "user", content });
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+      messages.push({ role: "user", content, time: timeStr });
       renderMessages();
       userInput.value = "";
 
@@ -317,7 +344,8 @@
         typingIndicator.style.display = "none";
 
         const reply = data.choices[0].message.content;
-        messages.push({ role: "assistant", content: "" });
+        const botTime = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+        messages.push({ role: "assistant", content: "", time: botTime });
         renderMessages();
 
         let i = 0;
