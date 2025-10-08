@@ -43,7 +43,6 @@
       box-shadow: 0 0 20px rgba(0,0,0,0.2);
       overflow: hidden;
       z-index: 1000;
-      display: flex;
       flex-direction: column;
     }
 
@@ -142,11 +141,11 @@
 <body>
 
   <!-- دکمه شناور ربات -->
-  <button class="chat-toggle-btn" onclick="toggleChat()">
+  <button class="chat-toggle-btn" id="chatToggleBtn" onclick="openChat()">
     <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat Bot" />
   </button>
 
-  <!-- پنجره چت -->
+  <!-- پنل چت -->
   <div id="chatContainer">
     <div class="chat-header">
       BK-AI Chat
@@ -166,17 +165,20 @@
     const typingIndicator = document.getElementById('typingIndicator');
     const sendBtn = document.querySelector('.send-btn');
     const chatContainer = document.getElementById('chatContainer');
+    const chatToggleBtn = document.getElementById('chatToggleBtn');
 
     let messages = [];
     let typingInterval = null;
     let stopTyping = false;
 
-    function toggleChat() {
-      chatContainer.style.display = chatContainer.style.display === 'none' ? 'flex' : 'none';
+    function openChat() {
+      chatContainer.style.display = 'flex';
+      chatToggleBtn.style.display = 'none';
     }
 
     function closeChat() {
       chatContainer.style.display = 'none';
+      chatToggleBtn.style.display = 'block';
     }
 
     const renderMessages = () => {
