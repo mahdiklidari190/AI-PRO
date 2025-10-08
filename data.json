@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "source": "https://www.nspvco.com",
+    "generated_at": "2025-10-09T00:00:00Z",
+    "version": "1.0",
+    "note": "این JSON از محتوای صفحهٔ اصلی سایت استخراج شده؛ برای جزئیات محصولات صفحات اختصاصی را اسکرپ کنید."
+  },
+  "company": {
+    "name": "شرکت نوین صنعت پرتوگستر وندا",
+    "phones": [
+      "03191097097",
+      "09137324875",
+      "09137972932"
+    ],
+    "addresses": {
+      "office": "اصفهان، منطقه صنعتی دولت آباد، بلوار امام خمینی، خیابان نشاط اصفهانی(18)،انتهای فاز اول، پلاک96، طبقه دوم",
+      "factory": "اصفهان، منطقه صنعتی دولت آباد، بلوار امام خمینی، خیابان نشاط اصفهانی(18)، پلاک 14"
+    },
+    "working_hours": "شنبه تا چهارشنبه 7:30 الی 17 (پنجشنبه‌ها تعطیل)",
+    "copyright": "تمام حقوق مادی و معنوی این سایت متعلق به شرکت نوین صنعت پرتوگستر وندا می باشد."
+  },
+  "pages": [
+    {
+      "id": "home",
+      "url": "https://www.nspvco.com/",
+      "title": "صفحهٔ نخست",
+      "summary": "شرکت نوین صنعت پرتوگستر وندا — تولیدکننده دستگاه جوش لیزری، تمیزکننده لیزری، برش لیزری و قطعات مرتبط.",
+      "content_snippet": "جمعی از فارغ التحصیلان دانشگاه شهید بهشتی در رشته لیزر پس از چهارده سال تجربه این شرکت را تأسیس کردند. کیفیت تضمینی، گارانتی یک ساله، آموزش و راه‌اندازی و خدمات پس از فروش ارائه می‌شود.",
+      "tags": ["home", "company", "overview"]
+    },
+    {
+      "id": "products-overview",
+      "url": "https://www.nspvco.com/",
+      "title": "محصولات وندا (دسته‌بندی‌ها)",
+      "summary": "دستگاه جوش لیزری، دستگاه تمیزکننده لیزری، دستگاه برش لیزری، قطعات یدکی، سورس لیزر فایبر، هد لیزر، لنز، نازل، چیلر، وایر فیدر، عینک جوش لیزر، روتاری و ...",
+      "items": [
+        {"slug":"laser-welding","title":"دستگاه جوش لیزری","url":"https://www.nspvco.com/#products"},
+        {"slug":"laser-cleaner","title":"دستگاه تمیزکننده لیزری","url":"https://www.nspvco.com/#products"},
+        {"slug":"laser-cutting","title":"دستگاه برش لیزری","url":"https://www.nspvco.com/#products"},
+        {"slug":"spare-parts","title":"قطعات یدکی دستگاه جوش لیزر","url":"https://www.nspvco.com/#products"},
+        {"slug":"fiber-source","title":"سورس لیزر فایبر","url":"https://www.nspvco.com/#products"},
+        {"slug":"laser-head","title":"هد دستگاه لیزر","url":"https://www.nspvco.com/#products"}
+      ],
+      "tags": ["products", "catalog"]
+    },
+    {
+      "id": "top-products",
+      "url": "https://www.nspvco.com/",
+      "title": "پرفروش‌ترین محصولات",
+      "products": [
+        {"id":"vhlw-1000","title":"دستگاه جوش لیزری وندا مدل VHLW-1000","url":"https://www.nspvco.com/"},
+        {"id":"gantry","title":"دستگاه جوش لیزری گانتری (دروازه‌ای)","url":"https://www.nspvco.com/"},
+        {"id":"auto-5-axis","title":"دستگاه جوش لیزری اتوماتیک 5 محور","url":"https://www.nspvco.com/"},
+        {"id":"twb","title":"دستگاه جوش لیزری TWB","url":"https://www.nspvco.com/"}
+      ],
+      "tags": ["products", "top-sellers"]
+    },
+    {
+      "id": "events",
+      "url": "https://www.nspvco.com/",
+      "title": "آخرین رویدادها و نمایشگاه‌ها",
+      "items": [
+        {"title":"پنجمین نمایشگاه صنعت و ابزار تهران","date_sh":"مهر 13, 1404"},
+        {"title":"بیستمین نمایشگاه صنعت اصفهان","date_sh":"مرداد 22, 1404"},
+        {"title":"بیست و هشتمین نمایشگاه نفت، گاز، پالایش، پتروشیمی","date_sh":"اردیبهشت 21, 1404"},
+        {"title":"نمایشگاه صنعت تهران 1403","date_sh":"آبان 19, 1403"}
+      ],
+      "tags": ["events", "exhibitions"]
+    },
+    {
+      "id": "certifications",
+      "url": "https://www.nspvco.com/",
+      "title": "گواهی‌ها و مجوزها",
+      "items": [
+        "پروانه بهره برداری سازمان",
+        "پروانه سازمان انرژی اتمی",
+        "گواهی نمایندگی QILIN",
+        "گواهی نمایندگی GW",
+        "گواهی انطباق استاندارد"
+      ],
+      "tags": ["certificates", "licenses"]
+    },
+    {
+      "id": "contact",
+      "url": "https://www.nspvco.com/contact",
+      "title": "تماس با ما",
+      "summary": "شماره‌ها و آدرس دفتر مرکزی و کارخانه، لینک شبکه‌های اجتماعی و فرم تماس در سایت.",
+      "phones": [
+        "03191097097",
+        "09137324875",
+        "09137972932"
+      ],
+      "social": {
+        "instagram": "https://www.instagram.com",
+        "whatsapp": "https://api.whatsapp.com",
+        "telegram": "https://t.me"
+      },
+      "tags": ["contact", "support"]
+    }
+  ]
+}
