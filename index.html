@@ -3,15 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BK-AI Chat</title>
+  <title>تست دکمه ربات</title>
   <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9fafb;
-    }
-
-    /* دکمه شناور ربات گرافیکی */
     .chat-toggle-btn {
       position: fixed;
       bottom: 20px;
@@ -26,245 +19,52 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.3s ease;
-      overflow: visible;
     }
 
-    .chat-toggle-btn:hover {
-      background: #22c55e;
-    }
-
-    .bot-icon {
-      position: relative;
-      z-index: 2;
-    }
-
-    .bot-head {
-      transition: transform 0.3s ease, fill 0.3s ease;
-    }
-
-    .chat-toggle-btn:hover .bot-head {
-      transform: scale(1.2);
-      fill: black;
-    }
-
-    .pulse-ring {
-      position: absolute;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: rgba(34, 197, 94, 0.3);
-      animation: pulse 2s infinite;
-      z-index: 1;
-    }
-
-    .pulse-ring.delay {
-      animation-delay: 1s;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-        opacity: 0.6;
-      }
-      50% {
-        transform: scale(1.5);
-        opacity: 0.3;
-      }
-      100% {
-        transform: scale(2);
-        opacity: 0;
-      }
-    }
-
-    /* پنل چت */
     #chatContainer {
       display: none;
       position: fixed;
-      bottom: 90px;
+      bottom: 100px;
       right: 20px;
-      width: 400px;
-      height: 600px;
+      width: 300px;
+      height: 400px;
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      overflow: hidden;
-      z-index: 1000;
-      flex-direction: column;
-    }
-
-    @media (max-width: 768px) {
-      #chatContainer {
-        width: 100%;
-        height: 100%;
-        bottom: 0;
-        right: 0;
-        border-radius: 0;
-      }
-    }
-
-    .chat-header {
-      background: #0ea5e9;
-      color: white;
-      padding: 0.8rem;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-header button {
-      background: #ef4444;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 0.2rem 0.6rem;
-      cursor: pointer;
-    }
-
-    .chat-box {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1rem;
-      background: #f9fafb;
-    }
-
-    .message {
-      margin-bottom: 1rem;
-      padding: 0.6rem 0.8rem;
       border-radius: 12px;
-      max-width: 80%;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
-
-    .user {
-      background: #dbeafe;
-      margin-left: auto;
-    }
-
-    .assistant {
-      background: #f3f4f6;
-      margin-right: auto;
-    }
-
-    .input-area {
-      display: flex;
-      padding: 0.8rem;
-      gap: 0.5rem;
-      border-top: 1px solid #ddd;
-      background: #fff;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 0.6rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    button.send-btn {
-      background: #0ea5e9;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 0.6rem 1rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    button.send-btn:hover {
-      background: #0284c7;
-    }
-
-    .typing {
-      font-style: italic;
-      color: #6b7280;
-      padding: 0.5rem 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      padding: 1rem;
+      z-index: 1000;
     }
   </style>
 </head>
 <body>
 
-  <!-- دکمه شناور ربات -->
   <button class="chat-toggle-btn" id="chatToggleBtn" onclick="openChat()">
-    <div class="pulse-ring"></div>
-    <div class="pulse-ring delay"></div>
-    <div class="bot-icon">
-      <svg viewBox="0 0 64 64" width="40" height="40" class="bot-head">
-        <circle cx="32" cy="32" r="28" fill="white" stroke="#6b21a8" stroke-width="4"/>
-        <circle cx="24" cy="28" r="4" fill="#6b21a8"/>
-        <circle cx="40" cy="28" r="4" fill="#6b21a8"/>
-        <rect x="22" y="38" width="20" height="6" rx="3" fill="#6b21a8"/>
-        <line x1="32" y1="4" x2="32" y2="12" stroke="#6b21a8" stroke-width="3"/>
-        <circle cx="32" cy="4" r="3" fill="#6b21a8"/>
-      </svg>
-    </div>
+    باز کردن چت
   </button>
 
-  <!-- پنل چت -->
   <div id="chatContainer">
-    <div class="chat-header">
-      BK-AI Chat
-      <button onclick="closeChat()">✖</button>
-    </div>
-    <div class="chat-box" id="chatBox"></div>
-    <div class="typing" id="typingIndicator" style="display:none;">در حال نوشتن...</div>
-    <div class="input-area">
-      <input type="text" id="userInput" placeholder="...پیام خود را بنویسید" />
-      <button class="send-btn" onclick="sendMessage()">ارسال</button>
-    </div>
+    <p>سلام! این پنل چت باز شد 🎉</p>
+    <button onclick="closeChat()">بستن</button>
   </div>
 
   <script>
-    const chatBox = document.getElementById('chatBox');
-    const userInput = document.getElementById('userInput');
-    const typingIndicator = document.getElementById('typingIndicator');
-    const sendBtn = document.querySelector('.send-btn');
-    const chatContainer = document.getElementById('chatContainer');
-    const chatToggleBtn = document.getElementById('chatToggleBtn');
-
-    let messages = [];
-    let typingInterval = null;
-    let stopTyping = false;
-
     function isMobile() {
       return window.innerWidth <= 768;
     }
 
     function openChat() {
-      chatContainer.style.display = 'flex';
+      document.getElementById('chatContainer').style.display = 'flex';
       if (isMobile()) {
-        chatToggleBtn.style.display = 'none';
+        document.getElementById('chatToggleBtn').style.display = 'none';
       }
     }
 
     function closeChat() {
-      chatContainer.style.display = 'none';
+      document.getElementById('chatContainer').style.display = 'none';
       if (isMobile()) {
-        chatToggleBtn.style.display = 'block';
+        document.getElementById('chatToggleBtn').style.display = 'block';
       }
     }
-
-    const renderMessages = () => {
-      chatBox.innerHTML = "";
-      messages.forEach((msg) => {
-        const div = document.createElement("div");
-        div.className = "message " + (msg.role === "user" ? "user" : "assistant");
-        div.textContent = msg.content;
-        chatBox.appendChild(div);
-      });
-      chatBox.scrollTop = chatBox.scrollHeight;
-    };
-
-    const sendMessage = async () => {
-      const content = userInput.value.trim();
-      if (!content) return;
-
-      messages.push({ role: "user", content });
-      renderMessages();
-      userInput.value = "";
-
-      typingIndicator.style.display = "block";
-      sendBtn
+  </script>
+</body>
+</html>
