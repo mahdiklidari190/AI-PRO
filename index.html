@@ -23,7 +23,7 @@
       border-radius: 50%;
       cursor: pointer;
       z-index: 1001;
-      transition: background-color 0.4s ease;
+      transition: background-color 0.4s ease, opacity 0.4s ease, visibility 0.4s ease;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -262,7 +262,8 @@
       chatContainer.style.display = 'flex';
       chatToggleBtn.classList.add('active');
       if (isMobile()) {
-        chatToggleBtn.style.display = 'none';
+        chatToggleBtn.style.visibility = 'hidden';
+        chatToggleBtn.style.opacity = '0';
       }
     }
 
@@ -270,7 +271,8 @@
       chatContainer.style.display = 'none';
       chatToggleBtn.classList.remove('active');
       if (isMobile()) {
-        chatToggleBtn.style.display = 'block';
+        chatToggleBtn.style.visibility = 'visible';
+        chatToggleBtn.style.opacity = '1';
       }
     }
 
