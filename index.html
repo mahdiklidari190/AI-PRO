@@ -11,14 +11,14 @@
       background: #f9fafb;
     }
 
-    /* دکمه شناور ربات */
+    /* دکمه ربات */
     .chat-toggle-btn {
       position: fixed;
       bottom: 20px;
       right: 20px;
       width: 70px;
       height: 70px;
-      background-color: #8b5cf6; /* بنفش */
+      background-color: #8b5cf6;
       border: none;
       border-radius: 50%;
       cursor: pointer;
@@ -38,18 +38,28 @@
     }
 
     .chat-toggle-btn:hover {
-      background-color: #22c55e; /* سبز روشن */
+      background-color: #22c55e;
     }
 
     .chat-toggle-btn:hover img {
       transform: scale(1.2);
-      filter: brightness(0%) grayscale(100%);
+      filter: brightness(0%) grayscale(100%) invert(100%);
+    }
+
+    /* حالت فعال (وقتی چت باز است) */
+    .chat-toggle-btn.active {
+      background-color: #22c55e;
+    }
+
+    .chat-toggle-btn.active img {
+      transform: scale(1.1);
+      filter: brightness(0%) grayscale(100%) invert(100%);
     }
 
     .pulse-circle {
       position: absolute;
       border-radius: 50%;
-      background-color: rgba(34, 197, 94, 0.3); /* سبز کمرنگ */
+      background-color: rgba(34, 197, 94, 0.3);
       z-index: -1;
       animation: pulse 2s infinite ease-in-out;
     }
@@ -190,11 +200,11 @@
 </head>
 <body>
 
-  <!-- دکمه شناور ربات -->
-  <button class="chat-toggle-btn" id="chatToggleBtn" onclick="openChat()">
+  <!-- دکمه ربات -->
+  <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
     <div class="pulse-circle circle1"></div>
     <div class="pulse-circle circle2"></div>
-    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="Chat Bot" />
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="Chat Bot" />
   </button>
 
   <!-- پنل چت -->
@@ -227,8 +237,17 @@
       return window.innerWidth <= 768;
     }
 
+    function toggleChat() {
+      if (chatContainer.style.display === 'flex') {
+        closeChat();
+      } else {
+        openChat();
+      }
+    }
+
     function openChat() {
       chatContainer.style.display = 'flex';
+      chatToggleBtn.classList.add('active');
       if (isMobile()) {
         chatToggleBtn.style.display = 'none';
       }
@@ -236,6 +255,7 @@
 
     function closeChat() {
       chatContainer.style.display = 'none';
+      chatToggleBtn.classList.remove('active');
       if (isMobile()) {
         chatToggleBtn.style.display = 'block';
       }
