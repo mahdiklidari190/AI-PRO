@@ -7,11 +7,11 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Vazir', 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: #f9fafb;
     }
 
-    /* دکمه ربات شناور */
+    /* دکمه ربات */
     .chat-toggle-btn {
       position: fixed;
       bottom: 20px;
@@ -23,12 +23,11 @@
       border-radius: 50%;
       cursor: pointer;
       z-index: 1001;
-      transition: background-color 0.4s ease, opacity 0.4s ease, visibility 0.4s ease;
+      transition: background-color 0.4s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: visible;
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
     }
 
     .chat-toggle-btn:hover {
@@ -103,11 +102,10 @@
       height: 600px;
       background: white;
       border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.15);
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
       overflow: hidden;
       z-index: 1000;
       flex-direction: column;
-      transition: all 0.4s ease;
     }
 
     @media (max-width: 768px) {
@@ -120,49 +118,74 @@
       }
     }
 
-    /* === هدر زیبا === */
+    /* هدر چت */
     .chat-header {
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      background: linear-gradient(90deg, #0ea5e9, #2563eb);
       color: white;
-      padding: 1rem;
+      padding: 0.8rem 1rem;
+      font-weight: bold;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-weight: 600;
-      font-size: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      position: relative;
     }
 
-    .chat-header .chat-title {
+    .chat-title {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .chat-header img {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: white;
-      padding: 4px;
+    /* دکمه تماس */
+    .call-btn {
+      position: relative;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 1.3rem;
+      transition: transform 0.3s ease;
     }
 
-    /* دکمه بستن جدید */
-    .close-btn {
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
+    .call-btn:hover {
+      transform: scale(1.2);
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      right: 120%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #111827;
       color: white;
-      font-size: 1.2rem;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
       transition: all 0.3s ease;
     }
 
-    .close-btn:hover {
-      background: rgba(255, 255, 255, 0.35);
-      transform: rotate(90deg);
+    .call-btn:hover .tooltip {
+      opacity: 1;
+      right: 140%;
+    }
+
+    .chat-header button.close-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .chat-header button.close-btn:hover {
+      background: #dc2626;
     }
 
     .chat-box {
@@ -192,16 +215,11 @@
       margin-right: auto;
     }
 
-    .msg-time {
-      display: block;
+    .time {
+      font-size: 0.7rem;
+      color: #6b7280;
+      margin-top: 2px;
       text-align: right;
-      font-size: 0.75rem;
-      color: #9ca3af;
-      margin-top: 4px;
-    }
-
-    .user .msg-time {
-      text-align: left;
     }
 
     .input-area {
@@ -221,18 +239,18 @@
     }
 
     button.send-btn {
-      background: #3b82f6;
+      background: #0ea5e9;
       color: white;
       border: none;
       border-radius: 8px;
       padding: 0.6rem 1rem;
       font-size: 1rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: background 0.3s ease;
     }
 
     button.send-btn:hover {
-      background: #2563eb;
+      background: #0284c7;
     }
 
     .typing {
@@ -256,19 +274,25 @@
   <div id="chatContainer">
     <div class="chat-header">
       <div class="chat-title">
-        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="bot" />
-        <span>BK Assistant</span>
+        <span>BK-AI Chat</span>
+        <button class="call-btn" onclick="callCreator()" title="تماس با سازنده">
+          📞
+          <span class="tooltip">تماس با سازنده</span>
+        </button>
       </div>
-      <button class="close-btn" onclick="closeChat()">✕</button>
+      <button class="close-btn" onclick="closeChat()">✖ بستن</button>
     </div>
+
     <div class="chat-box" id="chatBox"></div>
     <div class="typing" id="typingIndicator" style="display:none;">در حال نوشتن...</div>
+
     <div class="input-area">
       <input type="text" id="userInput" placeholder="...پیام خود را بنویسید" />
       <button class="send-btn" onclick="sendMessage()">ارسال</button>
     </div>
   </div>
 
+  <!-- اسکریپت -->
   <script>
     const chatBox = document.getElementById('chatBox');
     const userInput = document.getElementById('userInput');
@@ -281,9 +305,7 @@
     let typingInterval = null;
     let stopTyping = false;
 
-    function isMobile() {
-      return window.innerWidth <= 768;
-    }
+    function isMobile() { return window.innerWidth <= 768; }
 
     function toggleChat() {
       if (chatContainer.style.display === 'flex') closeChat();
@@ -293,19 +315,18 @@
     function openChat() {
       chatContainer.style.display = 'flex';
       chatToggleBtn.classList.add('active');
-      if (isMobile()) {
-        chatToggleBtn.style.visibility = 'hidden';
-        chatToggleBtn.style.opacity = '0';
-      }
+      if (isMobile()) chatToggleBtn.style.display = 'none';
     }
 
     function closeChat() {
       chatContainer.style.display = 'none';
       chatToggleBtn.classList.remove('active');
-      if (isMobile()) {
-        chatToggleBtn.style.visibility = 'visible';
-        chatToggleBtn.style.opacity = '1';
-      }
+      if (isMobile()) chatToggleBtn.style.display = 'block';
+    }
+
+    function getTime() {
+      const now = new Date();
+      return now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
     }
 
     const renderMessages = () => {
@@ -313,18 +334,11 @@
       messages.forEach((msg) => {
         const div = document.createElement("div");
         div.className = "message " + (msg.role === "user" ? "user" : "assistant");
-
-        const text = document.createElement("div");
-        text.textContent = msg.content;
-        div.appendChild(text);
-
-        if (msg.time) {
-          const time = document.createElement("span");
-          time.className = "msg-time";
-          time.textContent = msg.time;
-          div.appendChild(time);
-        }
-
+        div.textContent = msg.content;
+        const time = document.createElement("div");
+        time.className = "time";
+        time.textContent = msg.time;
+        div.appendChild(time);
         chatBox.appendChild(div);
       });
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -334,10 +348,7 @@
       const content = userInput.value.trim();
       if (!content) return;
 
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-
-      messages.push({ role: "user", content, time: timeStr });
+      messages.push({ role: "user", content, time: getTime() });
       renderMessages();
       userInput.value = "";
 
@@ -355,7 +366,7 @@
           },
           body: JSON.stringify({
             model: "gpt-4o",
-            messages: messages.map(({ role, content }) => ({ role, content }))
+            messages: messages
           })
         });
 
@@ -363,9 +374,7 @@
         typingIndicator.style.display = "none";
 
         const reply = data.choices[0].message.content;
-        const replyTime = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-
-        messages.push({ role: "assistant", content: "", time: replyTime });
+        messages.push({ role: "assistant", content: "", time: getTime() });
         renderMessages();
 
         let i = 0;
@@ -380,18 +389,19 @@
           renderMessages();
           i++;
         }, 30);
-
       } catch (error) {
-        console.error("خطا در دریافت پاسخ:", error);
+        console.error("خطا:", error);
         typingIndicator.style.display = "none";
         sendBtn.textContent = "ارسال";
         sendBtn.onclick = sendMessage;
       }
     };
 
-    const stopMessage = () => {
-      stopTyping = true;
-    };
+    const stopMessage = () => { stopTyping = true; };
+
+    function callCreator() {
+      window.location.href = "tel:09211243320";
+    }
 
     userInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
