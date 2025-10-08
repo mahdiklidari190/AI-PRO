@@ -7,11 +7,11 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Vazir', 'Segoe UI', sans-serif;
       background: #f9fafb;
     }
 
-    /* دکمه ربات */
+    /* دکمه ربات شناور */
     .chat-toggle-btn {
       position: fixed;
       bottom: 20px;
@@ -23,11 +23,12 @@
       border-radius: 50%;
       cursor: pointer;
       z-index: 1001;
-      transition: background-color 0.4s ease;
+      transition: background-color 0.4s ease, opacity 0.4s ease, visibility 0.4s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: visible;
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
     }
 
     .chat-toggle-btn:hover {
@@ -102,10 +103,11 @@
       height: 600px;
       background: white;
       border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      box-shadow: 0 0 25px rgba(0,0,0,0.15);
       overflow: hidden;
       z-index: 1000;
       flex-direction: column;
+      transition: all 0.4s ease;
     }
 
     @media (max-width: 768px) {
@@ -118,74 +120,80 @@
       }
     }
 
-    /* هدر چت */
+    /* === هدر زیبا === */
     .chat-header {
-      background: linear-gradient(90deg, #0ea5e9, #2563eb);
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
       color: white;
-      padding: 0.8rem 1rem;
-      font-weight: bold;
+      padding: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       position: relative;
     }
 
-    .chat-title {
+    .chat-header .chat-title {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    /* دکمه تماس */
-    .call-btn {
-      position: relative;
-      background: transparent;
+    .chat-header img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: white;
+      padding: 4px;
+    }
+
+    /* دکمه بستن و تماس */
+    .header-btns {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-btn {
+      background: rgba(255, 255, 255, 0.15);
       border: none;
-      cursor: pointer;
       color: white;
-      font-size: 1.3rem;
-      transition: transform 0.3s ease;
+      font-size: 1.2rem;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: visible;
     }
 
-    .call-btn:hover {
-      transform: scale(1.2);
+    .header-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(1.15);
     }
 
-    /* Tooltip */
-    .tooltip {
+    /* Tooltip سمت راست */
+    .header-btn .tooltip {
       position: absolute;
-      right: 120%;
       top: 50%;
+      right: 120%;
       transform: translateY(-50%);
-      background: #111827;
+      background: rgba(17, 24, 39, 0.9);
       color: white;
       padding: 5px 10px;
       border-radius: 6px;
       font-size: 0.8rem;
       white-space: nowrap;
       opacity: 0;
-      pointer-events: none;
       transition: all 0.3s ease;
+      pointer-events: none;
     }
 
-    .call-btn:hover .tooltip {
-      opacity: 1;
+    .header-btn:hover .tooltip {
       right: 140%;
-    }
-
-    .chat-header button.close-btn {
-      background: #ef4444;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 0.3rem 0.7rem;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .chat-header button.close-btn:hover {
-      background: #dc2626;
+      opacity: 1;
     }
 
     .chat-box {
@@ -215,11 +223,16 @@
       margin-right: auto;
     }
 
-    .time {
-      font-size: 0.7rem;
-      color: #6b7280;
-      margin-top: 2px;
+    .msg-time {
+      display: block;
       text-align: right;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    .user .msg-time {
+      text-align: left;
     }
 
     .input-area {
@@ -239,18 +252,18 @@
     }
 
     button.send-btn {
-      background: #0ea5e9;
+      background: #3b82f6;
       color: white;
       border: none;
       border-radius: 8px;
       padding: 0.6rem 1rem;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.2s ease;
     }
 
     button.send-btn:hover {
-      background: #0284c7;
+      background: #2563eb;
     }
 
     .typing {
@@ -274,13 +287,16 @@
   <div id="chatContainer">
     <div class="chat-header">
       <div class="chat-title">
-        <span>BK-AI Chat</span>
-        <button class="call-btn" onclick="callCreator()" title="تماس با سازنده">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="bot" />
+        <span>BK Assistant</span>
+      </div>
+      <div class="header-btns">
+        <button class="header-btn" onclick="callCreator()">
           📞
           <span class="tooltip">تماس با سازنده</span>
         </button>
+        <button class="header-btn" onclick="closeChat()">✕</button>
       </div>
-      <button class="close-btn" onclick="closeChat()">✖ بستن</button>
     </div>
 
     <div class="chat-box" id="chatBox"></div>
@@ -292,7 +308,6 @@
     </div>
   </div>
 
-  <!-- اسکریپت -->
   <script>
     const chatBox = document.getElementById('chatBox');
     const userInput = document.getElementById('userInput');
@@ -315,18 +330,19 @@
     function openChat() {
       chatContainer.style.display = 'flex';
       chatToggleBtn.classList.add('active');
-      if (isMobile()) chatToggleBtn.style.display = 'none';
+      if (isMobile()) {
+        chatToggleBtn.style.visibility = 'hidden';
+        chatToggleBtn.style.opacity = '0';
+      }
     }
 
     function closeChat() {
       chatContainer.style.display = 'none';
       chatToggleBtn.classList.remove('active');
-      if (isMobile()) chatToggleBtn.style.display = 'block';
-    }
-
-    function getTime() {
-      const now = new Date();
-      return now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+      if (isMobile()) {
+        chatToggleBtn.style.visibility = 'visible';
+        chatToggleBtn.style.opacity = '1';
+      }
     }
 
     const renderMessages = () => {
@@ -334,11 +350,7 @@
       messages.forEach((msg) => {
         const div = document.createElement("div");
         div.className = "message " + (msg.role === "user" ? "user" : "assistant");
-        div.textContent = msg.content;
-        const time = document.createElement("div");
-        time.className = "time";
-        time.textContent = msg.time;
-        div.appendChild(time);
+        div.innerHTML = `${msg.content}<span class="msg-time">${msg.time || ""}</span>`;
         chatBox.appendChild(div);
       });
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -348,7 +360,8 @@
       const content = userInput.value.trim();
       if (!content) return;
 
-      messages.push({ role: "user", content, time: getTime() });
+      const timeStr = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+      messages.push({ role: "user", content, time: timeStr });
       renderMessages();
       userInput.value = "";
 
@@ -366,7 +379,7 @@
           },
           body: JSON.stringify({
             model: "gpt-4o",
-            messages: messages
+            messages: messages.map(({ role, content }) => ({ role, content }))
           })
         });
 
@@ -374,7 +387,9 @@
         typingIndicator.style.display = "none";
 
         const reply = data.choices[0].message.content;
-        messages.push({ role: "assistant", content: "", time: getTime() });
+        const replyTime = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+        messages.push({ role: "assistant", content: "", time: replyTime });
         renderMessages();
 
         let i = 0;
@@ -390,7 +405,6 @@
           i++;
         }, 30);
       } catch (error) {
-        console.error("خطا:", error);
         typingIndicator.style.display = "none";
         sendBtn.textContent = "ارسال";
         sendBtn.onclick = sendMessage;
