@@ -7,11 +7,11 @@
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Vazir', 'Segoe UI', sans-serif;
       background: #f9fafb;
     }
 
-    /* دکمه ربات */
+    /* دکمه شناور ربات */
     .chat-toggle-btn {
       position: fixed;
       bottom: 20px;
@@ -28,6 +28,7 @@
       align-items: center;
       justify-content: center;
       overflow: visible;
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
     }
 
     .chat-toggle-btn:hover {
@@ -87,18 +88,9 @@
     }
 
     @keyframes pulse {
-      0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
-      50% {
-        transform: scale(1.1);
-        opacity: 0.3;
-      }
-      100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+      100% { transform: scale(0.9); opacity: 0.7; }
     }
 
     /* پنل چت */
@@ -111,10 +103,11 @@
       height: 600px;
       background: white;
       border-radius: 20px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      box-shadow: 0 0 25px rgba(0,0,0,0.15);
       overflow: hidden;
       z-index: 1000;
       flex-direction: column;
+      transition: all 0.4s ease;
     }
 
     @media (max-width: 768px) {
@@ -127,25 +120,52 @@
       }
     }
 
+    /* === هدر زیبا === */
     .chat-header {
-      background: #0ea5e9;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
       color: white;
-      padding: 0.8rem;
-      font-weight: bold;
+      padding: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
-    .chat-header button {
-      background: #ef4444;
-      color: white;
+    .chat-header .chat-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-header img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: white;
+      padding: 4px;
+    }
+
+    /* دکمه بستن جدید */
+    .close-btn {
+      background: rgba(255, 255, 255, 0.15);
       border: none;
-      border-radius: 6px;
-      padding: 0.2rem 0.6rem;
+      color: white;
+      font-size: 1.2rem;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
       cursor: pointer;
+      transition: all 0.3s ease;
     }
 
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: rotate(90deg);
+    }
+
+    /* چت‌باکس */
     .chat-box {
       flex: 1;
       overflow-y: auto;
@@ -202,17 +222,18 @@
     }
 
     button.send-btn {
-      background: #0ea5e9;
+      background: #3b82f6;
       color: white;
       border: none;
       border-radius: 8px;
       padding: 0.6rem 1rem;
       font-size: 1rem;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     button.send-btn:hover {
-      background: #0284c7;
+      background: #2563eb;
     }
 
     .typing {
@@ -235,8 +256,11 @@
   <!-- پنل چت -->
   <div id="chatContainer">
     <div class="chat-header">
-      BK-AI Chat
-      <button onclick="closeChat()">✖</button>
+      <div class="chat-title">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="bot" />
+        <span>BK Assistant</span>
+      </div>
+      <button class="close-btn" onclick="closeChat()">✕</button>
     </div>
     <div class="chat-box" id="chatBox"></div>
     <div class="typing" id="typingIndicator" style="display:none;">در حال نوشتن...</div>
@@ -246,7 +270,6 @@
     </div>
   </div>
 
-  <!-- اسکریپت -->
   <script>
     const chatBox = document.getElementById('chatBox');
     const userInput = document.getElementById('userInput');
@@ -264,11 +287,8 @@
     }
 
     function toggleChat() {
-      if (chatContainer.style.display === 'flex') {
-        closeChat();
-      } else {
-        openChat();
-      }
+      if (chatContainer.style.display === 'flex') closeChat();
+      else openChat();
     }
 
     function openChat() {
@@ -327,45 +347,16 @@
       sendBtn.onclick = stopMessage;
       stopTyping = false;
 
-      try {
-        const response = await fetch("https://api.gapgpt.app/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer sk-S5rOGsclcKTN9vdMMsx3fZ1bYXALVqBV0z8WebUcX668zia4"
-          },
-          body: JSON.stringify({
-            model: "gpt-4o",
-            messages: messages
-          })
-        });
-
-        const data = await response.json();
+      // شبیه‌سازی پاسخ برای تست
+      setTimeout(() => {
         typingIndicator.style.display = "none";
-
-        const reply = data.choices[0].message.content;
         const botTime = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-        messages.push({ role: "assistant", content: "", time: botTime });
+        const reply = "درود! من BK هستم 😎 چطور کمکت کنم؟";
+        messages.push({ role: "assistant", content: reply, time: botTime });
         renderMessages();
-
-        let i = 0;
-        typingInterval = setInterval(() => {
-          if (stopTyping || i >= reply.length) {
-            clearInterval(typingInterval);
-            sendBtn.textContent = "ارسال";
-            sendBtn.onclick = sendMessage;
-            return;
-          }
-          messages[messages.length - 1].content += reply[i];
-          renderMessages();
-          i++;
-        }, 30);
-      } catch (error) {
-        console.error("خطا در دریافت پاسخ:", error);
-        typingIndicator.style.display = "none";
         sendBtn.textContent = "ارسال";
         sendBtn.onclick = sendMessage;
-      }
+      }, 1200);
     };
 
     const stopMessage = () => {
