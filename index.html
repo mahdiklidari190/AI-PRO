@@ -2,108 +2,19 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BK-AI Chat</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f9fafb;
+      direction: rtl;
     }
 
-    /* دکمه ربات */
-    .chat-toggle-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 70px;
-      height: 70px;
-      background-color: #8b5cf6; /* بنفش */
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 1001;
-      transition: background-color 0.4s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: visible;
-    }
-
-    .chat-toggle-btn:hover {
-      background-color: #22c55e; /* سبز */
-    }
-
-    .chat-toggle-btn img {
-      width: 40px;
-      height: 40px;
-      transition: transform 0.3s ease;
-      position: absolute;
-    }
-
-    #botIconNormal {
-      filter: brightness(100%) grayscale(100%);
-    }
-
-    #botIconActive {
-      display: none;
-      filter: brightness(0%) grayscale(100%) invert(100%);
-    }
-
-    .chat-toggle-btn:hover #botIconNormal {
-      transform: scale(1.2);
-      filter: brightness(0%) grayscale(100%) invert(100%);
-    }
-
-    .chat-toggle-btn.active {
-      background-color: #22c55e;
-    }
-
-    .chat-toggle-btn.active #botIconNormal {
-      display: none;
-    }
-
-    .chat-toggle-btn.active #botIconActive {
-      display: block;
-    }
-
-    .pulse-circle {
-      position: absolute;
-      border-radius: 50%;
-      background-color: rgba(34, 197, 94, 0.3);
-      z-index: -1;
-      animation: pulse 2s infinite ease-in-out;
-    }
-
-    .circle1 {
-      width: 80px;
-      height: 80px;
-    }
-
-    .circle2 {
-      width: 100px;
-      height: 100px;
-      animation-delay: 1s;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
-      50% {
-        transform: scale(1.1);
-        opacity: 0.3;
-      }
-      100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
-    }
-
-    /* پنل چت */
     #chatContainer {
-      display: none;
+      display: flex;
+      flex-direction: column;
       position: fixed;
       bottom: 90px;
       right: 20px;
@@ -114,7 +25,6 @@
       box-shadow: 0 0 20px rgba(0,0,0,0.2);
       overflow: hidden;
       z-index: 1000;
-      flex-direction: column;
     }
 
     @media (max-width: 768px) {
@@ -151,27 +61,76 @@
       overflow-y: auto;
       padding: 1rem;
       background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message-wrapper {
+      display: flex;
+      flex-direction: column;
+      max-width: 80%;
+    }
+
+    .message-wrapper.user {
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    .message-wrapper.assistant {
+      align-self: flex-start;
+      text-align: left;
     }
 
     .message {
-      margin-bottom: 1rem;
       padding: 0.6rem 0.8rem;
       border-radius: 12px;
-      max-width: 80%;
-      line-height: 1.6;
+      line-height: 1.4;
       white-space: pre-wrap;
+      font-size: 1rem;
     }
 
-    .user {
+    .message-wrapper.user .message {
       background: #dbeafe;
-      margin-left: auto;
+      border-bottom-right-radius: 0;
     }
 
-    .assistant {
+    .message-wrapper.assistant .message {
       background: #f3f4f6;
-      margin-right: auto;
+      border-bottom-left-radius: 0;
     }
 
+    .message-info {
+      font-size: 0.7rem;
+      color: #6b7280;
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      font-style: italic;
+      direction: ltr; /* ساعت و مکان انگلیسی باشه */
+      gap: 5px;
+    }
+
+    .message-info.user {
+      justify-content: flex-end;
+    }
+
+    .message-info.assistant {
+      justify-content: flex-start;
+    }
+
+    .location {
+      color: #22c55e; /* سبز */
+      font-weight: 600;
+    }
+
+    .typing {
+      font-style: italic;
+      color: #6b7280;
+      padding: 0.5rem 1rem;
+    }
+
+    /* ورودی و دکمه ارسال */
     .input-area {
       display: flex;
       padding: 0.8rem;
@@ -201,25 +160,10 @@
     button.send-btn:hover {
       background: #0284c7;
     }
-
-    .typing {
-      font-style: italic;
-      color: #6b7280;
-      padding: 0.5rem 1rem;
-    }
   </style>
 </head>
 <body>
 
-  <!-- دکمه ربات -->
-  <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
-    <div class="pulse-circle circle1"></div>
-    <div class="pulse-circle circle2"></div>
-    <img id="botIconNormal" src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="ربات سفید" />
-    <img id="botIconActive" src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="ربات فعال" />
-  </button>
-
-  <!-- پنل چت -->
   <div id="chatContainer">
     <div class="chat-header">
       BK-AI Chat
@@ -228,126 +172,194 @@
     <div class="chat-box" id="chatBox"></div>
     <div class="typing" id="typingIndicator" style="display:none;">در حال نوشتن...</div>
     <div class="input-area">
-      <input type="text" id="userInput" placeholder="...پیام خود را بنویسید" />
+      <input type="text" id="userInput" placeholder="...پیام خود را بنویسید" autocomplete="off" />
       <button class="send-btn" onclick="sendMessage()">ارسال</button>
     </div>
   </div>
 
-  <!-- اسکریپت -->
-  <script>
-    const chatBox = document.getElementById('chatBox');
-    const userInput = document.getElementById('userInput');
-    const typingIndicator = document.getElementById('typingIndicator');
-    const sendBtn = document.querySelector('.send-btn');
-    const chatContainer = document.getElementById('chatContainer');
-    const chatToggleBtn = document.getElementById('chatToggleBtn');
+<script>
+  const chatBox = document.getElementById('chatBox');
+  const userInput = document.getElementById('userInput');
+  const typingIndicator = document.getElementById('typingIndicator');
+  const sendBtn = document.querySelector('.send-btn');
+  const chatContainer = document.getElementById('chatContainer');
 
-    let messages = [];
-    let typingInterval = null;
-    let stopTyping = false;
+  let messages = [];
+  let typingInterval = null;
+  let stopTyping = false;
+  let userLocation = '';
 
-    function isMobile() {
-      return window.innerWidth <= 768;
-    }
-
-    function toggleChat() {
-      if (chatContainer.style.display === 'flex') {
-        closeChat();
-      } else {
-        openChat();
+  // گرفتن موقعیت مکانی کاربر
+  function getUserLocation() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        resolve('');
+        return;
       }
-    }
-
-    function openChat() {
-      chatContainer.style.display = 'flex';
-      chatToggleBtn.classList.add('active');
-      if (isMobile()) {
-        chatToggleBtn.style.display = 'none';
-      }
-    }
-
-    function closeChat() {
-      chatContainer.style.display = 'none';
-      chatToggleBtn.classList.remove('active');
-      if (isMobile()) {
-        chatToggleBtn.style.display = 'block';
-      }
-    }
-
-    const renderMessages = () => {
-      chatBox.innerHTML = "";
-      messages.forEach((msg) => {
-        const div = document.createElement("div");
-        div.className = "message " + (msg.role === "user" ? "user" : "assistant");
-        div.textContent = msg.content;
-        chatBox.appendChild(div);
-      });
-      chatBox.scrollTop = chatBox.scrollHeight;
-    };
-
-    const sendMessage = async () => {
-      const content = userInput.value.trim();
-      if (!content) return;
-
-      messages.push({ role: "user", content });
-      renderMessages();
-      userInput.value = "";
-
-      typingIndicator.style.display = "block";
-      sendBtn.textContent = "توقف";
-      sendBtn.onclick = stopMessage;
-      stopTyping = false;
-
-      try {
-        const response = await fetch("https://api.gapgpt.app/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer sk-S5rOGsclcKTN9vdMMsx3fZ1bYXALVqBV0z8WebUcX668zia4"
-          },
-          body: JSON.stringify({
-            model: "gpt-4o",
-            messages: messages
-          })
-        });
-
-        const data = await response.json();
-        typingIndicator.style.display = "none";
-
-        const reply = data.choices[0].message.content;
-        messages.push({ role: "assistant", content: "" });
-        renderMessages();
-
-        let i = 0;
-        typingInterval = setInterval(() => {
-          if (stopTyping || i >= reply.length) {
-            clearInterval(typingInterval);
-            sendBtn.textContent = "ارسال";
-            sendBtn.onclick = sendMessage;
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        try {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          // با استفاده از یک API رایگان مکان رو تبدیل به اسم شهر کنیم
+          // اینجا از api.open-meteo.com استفاده می کنیم که نیازی به کلید API نداره:
+          const res = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${lon}`);
+          if (!res.ok) {
+            resolve('');
             return;
           }
-          messages[messages.length - 1].content += reply[i];
-          renderMessages();
-          i++;
-        }, 30);
-      } catch (error) {
-        console.error("خطا در دریافت پاسخ:", error);
-        typingIndicator.style.display = "none";
-        sendBtn.textContent = "ارسال";
-        sendBtn.onclick = sendMessage;
-      }
-    };
-
-    const stopMessage = () => {
-      stopTyping = true;
-    };
-
-    userInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        sendMessage();
-      }
+          const data = await res.json();
+          // اسم شهر یا منطقه
+          if (data && data.address) {
+            if (data.address.city) {
+              resolve(data.address.city);
+            } else if(data.address.town) {
+              resolve(data.address.town);
+            } else if(data.address.village) {
+              resolve(data.address.village);
+            } else if(data.address.county) {
+              resolve(data.address.county);
+            } else {
+              resolve('');
+            }
+          } else {
+            resolve('');
+          }
+        } catch {
+          resolve('');
+        }
+      }, () => {
+        resolve('');
+      }, {timeout: 7000});
     });
-  </script>
+  }
+
+  function formatDate(date) {
+    // فرمت ساده برای تاریخ و ساعت (مثلا: 14:35 09/10/2025)
+    const h = date.getHours().toString().padStart(2,'0');
+    const m = date.getMinutes().toString().padStart(2,'0');
+    const d = date.getDate().toString().padStart(2,'0');
+    const mon = (date.getMonth()+1).toString().padStart(2,'0');
+    const y = date.getFullYear();
+    return `${h}:${m} ${d}/${mon}/${y}`;
+  }
+
+  function renderMessages() {
+    chatBox.innerHTML = "";
+    messages.forEach(msg => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-wrapper ' + (msg.role === 'user' ? 'user' : 'assistant');
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message';
+      msgDiv.textContent = msg.content;
+
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'message-info ' + (msg.role === 'user' ? 'user' : 'assistant');
+
+      // تاریخ و ساعت
+      const timeSpan = document.createElement('span');
+      timeSpan.textContent = formatDate(new Date(msg.timestamp));
+      infoDiv.appendChild(timeSpan);
+
+      // موقعیت مکانی فقط برای پیام کاربر
+      if(msg.role === 'user' && msg.location) {
+        const locSpan = document.createElement('span');
+        locSpan.className = 'location';
+        locSpan.textContent = msg.location;
+        infoDiv.appendChild(locSpan);
+      }
+
+      wrapper.appendChild(msgDiv);
+      wrapper.appendChild(infoDiv);
+
+      chatBox.appendChild(wrapper);
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const content = userInput.value.trim();
+    if (!content) return;
+
+    // اگر موقعیت مکانی هنوز نگرفته ایم بگیرش
+    if(!userLocation) {
+      userLocation = await getUserLocation();
+    }
+
+    // پیام کاربر همراه با زمان و موقعیت مکانی
+    messages.push({
+      role: 'user',
+      content,
+      timestamp: new Date(),
+      location: userLocation || ''
+    });
+    renderMessages();
+    userInput.value = "";
+
+    typingIndicator.style.display = "block";
+    sendBtn.textContent = "توقف";
+    sendBtn.onclick = stopMessage;
+    stopTyping = false;
+
+    try {
+      const response = await fetch("https://api.gapgpt.app/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer sk-S5rOGsclcKTN9vdMMsx3fZ1bYXALVqBV0z8WebUcX668zia4"
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: messages
+        })
+      });
+
+      const data = await response.json();
+      typingIndicator.style.display = "none";
+
+      const reply = data.choices[0].message.content;
+      messages.push({
+        role: 'assistant',
+        content: '',
+        timestamp: new Date()
+      });
+      renderMessages();
+
+      let i = 0;
+      typingInterval = setInterval(() => {
+        if(stopTyping || i >= reply.length) {
+          clearInterval(typingInterval);
+          sendBtn.textContent = "ارسال";
+          sendBtn.onclick = sendMessage;
+          return;
+        }
+        messages[messages.length - 1].content += reply[i];
+        renderMessages();
+        i++;
+      }, 30);
+    } catch (error) {
+      console.error("خطا در دریافت پاسخ:", error);
+      typingIndicator.style.display = "none";
+      sendBtn.textContent = "ارسال";
+      sendBtn.onclick = sendMessage;
+    }
+  }
+
+  function stopMessage() {
+    stopTyping = true;
+  }
+
+  userInput.addEventListener("keydown", function(e) {
+    if(e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  function closeChat() {
+    chatContainer.style.display = 'none';
+  }
+</script>
 </body>
 </html>
