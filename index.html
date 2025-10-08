@@ -11,7 +11,7 @@
       background: #f9fafb;
     }
 
-    /* دکمه شناور ربات */
+    /* دکمه ربات شناور */
     .chat-toggle-btn {
       position: fixed;
       bottom: 20px;
@@ -165,7 +165,6 @@
       transform: rotate(90deg);
     }
 
-    /* چت‌باکس */
     .chat-box {
       flex: 1;
       overflow-y: auto;
@@ -347,16 +346,47 @@
       sendBtn.onclick = stopMessage;
       stopTyping = false;
 
-      // شبیه‌سازی پاسخ برای تست
-      setTimeout(() => {
+      try {
+        const response = await fetch("https://api.gapgpt.app/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer sk-S5rOGsclcKTN9vdMMsx3fZ1bYXALVqBV0z8WebUcX668zia4"
+          },
+          body: JSON.stringify({
+            model: "gpt-4o",
+            messages: messages.map(({ role, content }) => ({ role, content }))
+          })
+        });
+
+        const data = await response.json();
         typingIndicator.style.display = "none";
-        const botTime = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-        const reply = "درود! من BK هستم 😎 چطور کمکت کنم؟";
-        messages.push({ role: "assistant", content: reply, time: botTime });
+
+        const reply = data.choices[0].message.content;
+        const replyTime = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+        messages.push({ role: "assistant", content: "", time: replyTime });
         renderMessages();
+
+        let i = 0;
+        typingInterval = setInterval(() => {
+          if (stopTyping || i >= reply.length) {
+            clearInterval(typingInterval);
+            sendBtn.textContent = "ارسال";
+            sendBtn.onclick = sendMessage;
+            return;
+          }
+          messages[messages.length - 1].content += reply[i];
+          renderMessages();
+          i++;
+        }, 30);
+
+      } catch (error) {
+        console.error("خطا در دریافت پاسخ:", error);
+        typingIndicator.style.display = "none";
         sendBtn.textContent = "ارسال";
         sendBtn.onclick = sendMessage;
-      }, 1200);
+      }
     };
 
     const stopMessage = () => {
