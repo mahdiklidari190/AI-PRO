@@ -207,6 +207,7 @@ body {
   background: var(--bg-dark);
 }
 
+/* برای موبایل */
 @media (max-width: 768px) {
   #chatContainer {
     width: calc(100% - 40px);
@@ -216,10 +217,17 @@ body {
     right: 20px;
     border-radius: 20px;
   }
-  
+
   .chat-toggle-btn {
     bottom: 20px;
     left: 20px;
+    transition: all 0.3s ease;
+  }
+
+  /* مخفی کردن دکمه روی موبایل وقتی باز است */
+  .chat-toggle-btn.hide-on-mobile {
+    visibility: hidden;
+    opacity: 0;
   }
 }
 
@@ -625,10 +633,11 @@ function openChat() {
   chatContainer.style.display = 'flex';
   chatContainer.classList.add('show');
   chatToggleBtn.classList.add('active');
+
   if (window.innerWidth <= 768) {
-    chatToggleBtn.style.visibility = 'hidden';
-    chatToggleBtn.style.opacity = '0';
+    chatToggleBtn.classList.add('hide-on-mobile'); // مخفی روی موبایل
   }
+
   userInput.focus();
 }
 
@@ -636,9 +645,9 @@ function closeChat() {
   chatContainer.classList.remove('show');
   setTimeout(() => { chatContainer.style.display = 'none'; }, 400);
   chatToggleBtn.classList.remove('active');
+
   if (window.innerWidth <= 768) {
-    chatToggleBtn.style.visibility = 'visible';
-    chatToggleBtn.style.opacity = '1';
+    chatToggleBtn.classList.remove('hide-on-mobile'); // دوباره نمایش
   }
 }
 
