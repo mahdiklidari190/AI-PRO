@@ -122,11 +122,6 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes typeWriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
 /* انیمیشن جدید برای فکر کردن هوش مصنوعی */
 @keyframes thinking {
   0%, 100% { transform: scale(1); opacity: 0.7; }
@@ -496,7 +491,7 @@ button.stop-btn:hover:not(:disabled) {
   <div class="chat-header">
     <div class="chat-title">
       <img src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="bot"/>
-      <span>دستیار هوشمند</span>
+      <span>دستیار نوین صنعت</span>
     </div>
     <div class="header-btns">
       <button class="header-btn theme-toggle" onclick="toggleTheme()" title="تغییر تم">🌙</button>
@@ -539,18 +534,44 @@ let isTyping = false;
 const RESTRICT_LIMIT = 3;
 const BLOCK_HOURS = 5;
 
-// بارگذاری داده‌های JSON
+// بارگذاری داده‌های JSON از گیتهاب
 async function loadJSON() {
   try {
+    console.log("در حال بارگذاری داده‌های JSON از گیتهاب...");
     const res = await fetch('https://raw.githubusercontent.com/mahdiklidari190/AI-PRO/main/data.json');
+    
+    if (!res.ok) {
+      throw new Error(`خطا در دریافت داده‌ها: ${res.status}`);
+    }
+    
     jsonData = await res.json();
-    console.log("JSON data loaded successfully:", jsonData);
+    console.log("✅ داده‌های JSON با موفقیت بارگذاری شد:", jsonData);
+    
+    // نمایش پیام موفقیت
+    if (messages.length === 1) { // فقط اگر پیام خوش‌آمدگویی وجود دارد
+      const successMsg = { 
+        role: "assistant", 
+        content: "✅ داده‌های شرکت با موفقیت بارگذاری شد!\n\nاکنون می‌توانید در مورد:\n• محصولات و خدمات شرکت\n• دستگاه‌های جوش لیزری\n• اطلاعات تماس\n• مشخصات فنی\n\nسوال بپرسید.", 
+        time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) 
+      };
+      messages.push(successMsg);
+      renderMessages();
+    }
+    
   } catch (e) {
-    console.error("خطا در بارگذاری JSON:", e);
+    console.error("❌ خطا در بارگذاری JSON:", e);
     jsonData = null;
+    
+    // نمایش پیام خطا
+    const errorMsg = { 
+      role: "assistant", 
+      content: "⚠️ متاسفانه داده‌های شرکت در دسترس نیست. اما همچنان می‌توانم به سوالات شما پاسخ دهم.", 
+      time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) 
+    };
+    messages.push(errorMsg);
+    renderMessages();
   }
 }
-loadJSON();
 
 // تشخیص زبان
 function detectLanguage(text) {
@@ -627,188 +648,116 @@ function renderMessages() {
   chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
 }
 
-// جستجوی هوشمند در JSON
+// جستجوی هوشمند در JSON - بهبود یافته
 function searchJSON(query, lang = 'fa') {
-    if (!jsonData) return null;
+    if (!jsonData) {
+        console.log("❌ داده‌های JSON بارگذاری نشده‌اند");
+        return null;
+    }
+    
+    console.log("🔍 در حال جستجو در JSON برای:", query);
     const lowerQuery = query.toLowerCase();
 
-    // ایجاد نقشه جامع برای جستجوی هوشمند
-    const searchMap = [
-        // اطلاعات شرکت
-        ...Object.entries(jsonData.company?.name || {}).map(([key, value]) => ({ 
-            type: 'company_name', field: key, value, context: 'معرفی شرکت' 
-        })),
-        ...(jsonData.company?.description ? Object.entries(jsonData.company.description).map(([key, value]) => ({ 
-            type: 'company_description', field: key, value, context: 'توضیحات شرکت' 
-        })) : []),
-        ...(jsonData.company?.contact?.phone || []).map(phone => ({ 
-            type: 'contact', field: 'phone', value: phone, context: 'تماس با شرکت' 
-        })),
-        
-        // محصولات و خدمات
-        ...(jsonData.products_services?.main_products || []).flatMap(category => 
-            category.items.flatMap(item => 
-                Object.entries(item.name || {}).map(([key, value]) => ({
-                    type: 'product',
-                    category: category.category,
-                    field: key,
-                    value,
-                    context: 'محصولات و خدمات',
-                    specs: item.specifications
-                }))
-            )
-        ),
-        ...(jsonData.products_services?.key_features || {}).fa?.map(feature => ({ 
-            type: 'feature', field: 'feature', value: feature, context: 'ویژگی‌های محصول' 
-        })),
-        
-        // مشخصات فنی
-        ...(jsonData.technical_specs?.materials?.fa || []).map(material => ({ 
-            type: 'spec', field: 'material', value: material, context: 'مواد قابل جوش' 
-        })),
-        ...(jsonData.technical_specs?.laser_sources?.fa || []).map(source => ({ 
-            type: 'spec', field: 'laser_source', value: source, context: 'منابع لیزری' 
-        }))
-    ];
-
-    // الگوهای تشخیص نیت کاربر
-    const intentPatterns = {
-        product_info: [/دستگاه|جوش|برش|لیزر|محصول|product|device|machine/i, 'product'],
-        price: [/قیمت|هزینه|خرید|قیمت|price|cost|buy|purchase/i, 'price'],
-        feature: [/ویژگی|قابلیت|مزیت|feature|advantage|spec/i, 'feature'],
-        contact: [/تماس|آدرس|تلفن|contact|address|phone/i, 'contact'],
-        company: [/شرکت|تاریخچه|سابقه|company|about|history/i, 'company'],
-        application: [/کاربرد|استفاده|application|use|industry/i, 'application']
-    };
-
-    // تشخیص نیت کاربر
-    let detectedIntent = 'general';
-    for (const [intent, [pattern]] of Object.entries(intentPatterns)) {
-        if (pattern.test(query)) {
-            detectedIntent = intent;
-            break;
-        }
-    }
-
-    // جستجوی اولویت‌بندی شده
-    const matchedItems = searchMap.filter(item => {
-        const matchScore = item.value.toLowerCase().includes(lowerQuery) ? 2 : 
-                          (JSON.stringify(item).toLowerCase().includes(lowerQuery) ? 1 : 0);
-        return matchScore > 0;
-    });
-
-    // تولید پاسخ غنی‌شده
-    if (matchedItems.length > 0) {
-        return generateRichResponse(matchedItems, detectedIntent, lang, query);
-    }
-
-    return null;
-}
-
-// تولید پاسخ‌های بازاریابی و فروش
-function generateRichResponse(matchedItems, intent, lang, originalQuery) {
-    const primaryItem = matchedItems[0];
-    
-    // تولید پاسخ بر اساس نیت کاربر
-    switch(intent) {
-        case 'product_info':
-            const productName = primaryItem.value;
-            const productContext = primaryItem.context;
-            
-            let response = `${productName}\n\n`;
-            response += `این ${productContext} شرکت نوین صنعت پرتو گستر وندا با بالاترین کیفیت و تکنولوژی روز دنیا تولید شده است.\n\n`;
-            
-            // اضافه کردن مشخصات فنی
-            if (primaryItem.specs) {
-                response += `مشخصات فنی:\n`;
-                primaryItem.specs.fa?.forEach(spec => {
-                    response += `${spec}\n`;
-                });
-                response += `\n`;
+    try {
+        // جستجو در اطلاعات شرکت
+        if (jsonData.company) {
+            // جستجو در نام شرکت
+            if (jsonData.company.name && jsonData.company.name.fa && 
+                jsonData.company.name.fa.toLowerCase().includes(lowerQuery)) {
+                return `شرکت ${jsonData.company.name.fa}\n\n${jsonData.company.description?.fa || 'شرکت پیشرو در تولید دستگاه‌های جوش لیزری'}`;
             }
             
-            // مزایای بازاریابی
-            response += `مزایای کلیدی:\n`;
-            response += `• صرفه‌جویی در انرژی تا ۸۰٪ نسبت به روش‌های سنتی\n`;
-            response += `• دقت و کیفیت فوق‌العاده در جوشکاری\n`;
-            response += `• خدمات پس از فروش و گارانتی معتبر\n`;
-            response += `• قابلیت سفارشی‌سازی بر اساس نیاز شما\n`;
-            response += `• سرعت عمل بالا و کاهش هزینه‌های تولید\n\n`;
+            // جستجو در توضیحات شرکت
+            if (jsonData.company.description && jsonData.company.description.fa && 
+                jsonData.company.description.fa.toLowerCase().includes(lowerQuery)) {
+                return jsonData.company.description.fa;
+            }
             
-            response += `تضمین کیفیت: تمام محصولات ما با استانداردهای بین‌المللی و پشتیبانی کامل تولید می‌شوند.\n\n`;
-            response += `برای دریافت مشاوره رایگان و استعلام قیمت، همین الان با ما تماس بگیرید!\n`;
-            response += `۰۲۱-۹۱۰۹۷۰۹۷ | ۰۹۱۳۷۹۷۲۹۳۲`;
+            // جستجو در اطلاعات تماس
+            if ((jsonData.company.contact?.phone && jsonData.company.contact.phone.some(phone => phone.includes(query))) ||
+                lowerQuery.includes('تماس') || lowerQuery.includes('تلفن') || lowerQuery.includes('آدرس')) {
+                let contactInfo = `📞 اطلاعات تماس شرکت ${jsonData.company.name?.fa || 'نوین صنعت'}:\n\n`;
+                if (jsonData.company.contact?.phone) {
+                    contactInfo += `تلفن‌ها:\n`;
+                    jsonData.company.contact.phone.forEach(phone => {
+                        contactInfo += `• ${phone}\n`;
+                    });
+                }
+                if (jsonData.company.location?.address?.fa) {
+                    contactInfo += `\nآدرس:\n${jsonData.company.location.address.fa}`;
+                }
+                return contactInfo;
+            }
+        }
+
+        // جستجو در محصولات و خدمات
+        if (jsonData.products_services) {
+            // جستجو در محصولات اصلی
+            if (jsonData.products_services.main_products) {
+                for (const category of jsonData.products_services.main_products) {
+                    for (const item of category.items) {
+                        if (item.name && item.name.fa && item.name.fa.toLowerCase().includes(lowerQuery)) {
+                            let productInfo = `🛠️ ${item.name.fa}\n\n`;
+                            if (item.specifications && item.specifications.fa) {
+                                productInfo += `مشخصات فنی:\n`;
+                                item.specifications.fa.forEach(spec => {
+                                    productInfo += `• ${spec}\n`;
+                                });
+                            }
+                            return productInfo;
+                        }
+                    }
+                }
+            }
             
-            return response;
+            // جستجو در ویژگی‌های کلیدی
+            if (jsonData.products_services.key_features && jsonData.products_services.key_features.fa) {
+                const matchingFeatures = jsonData.products_services.key_features.fa.filter(feature => 
+                    feature.toLowerCase().includes(lowerQuery)
+                );
+                if (matchingFeatures.length > 0) {
+                    return `✨ ویژگی‌های محصولات:\n\n${matchingFeatures.map(feature => `• ${feature}`).join('\n')}`;
+                }
+            }
+        }
 
-        case 'price':
-            return `استعلام قیمت ${primaryItem.value}\n\n`
-                 + `برای دریافت قیمت دقیق و مشاوره رایگان، لطفاً با واحد فروش ما تماس بگیرید:\n\n`
-                 + `۰۲۱-۹۱۰۹۷۰۹۷\n`
-                 + `۰۹۱۳۷۹۷۲۹۳۲\n\n`
-                 + `چرا ما؟\n`
-                 + `• بهترین قیمت در بازار\n`
-                 + `• خدمات پس از فروش ۲۴ ساعته\n`
-                 + `• گارانتی طلایی محصولات\n`
-                 + `• امکان خرید اقساطی\n\n`
-                 + `همکاران ما آماده ارائه مشاوره تخصصی به شما هستند!`;
-
-        case 'feature':
-            return `ویژگی‌های برتر ${primaryItem.value}\n\n`
-                 + `${primaryItem.value}\n\n`
-                 + `این ویژگی منحصر به فرد، کیفیت کار شما را به طور چشمگیری افزایش می‌دهد و باعث می‌شود:\n\n`
-                 + `• سرعت تولید شما افزایش یابد\n`
-                 + `• هزینه‌های شما کاهش پیدا کند\n`
-                 + `• کیفیت کار شما بهبود یابد\n`
-                 + `• رقابت‌پذیری شما بیشتر شود\n\n`
-                 + `پیشرو در تکنولوژی، متعهد به کیفیت`;
-
-        case 'contact':
-            return `اطلاعات تماس شرکت نوین صنعت پرتو گستر وندا\n\n`
-                 + `آدرس دفتر مرکزی:\n`
-                 + `اصفهان، منطقه صنعتی دولت آباد، بلوار امام خمینی، خیابان نشاط اصفهانی (۱۸)، پلاک ۱۴\n\n`
-                 + `تلفن‌های تماس:\n`
-                 + `• ۰۲۱-۹۱۰۹۷۰۹۷\n`
-                 + `• ۰۹۱۳۷۹۷۲۹۳۲\n\n`
-                 + `وبسایت: www.nspvco.com\n\n`
-                 + `ساعات کاری: شنبه تا چهارشنبه ۸:۰۰ تا ۱۷:۰۰\n\n`
-                 + `همکاران ما در بخش فروش و پشتیبانی، آماده پاسخگویی به سوالات و ارائه مشاوره رایگان به شما هستند!`;
-
-        case 'company':
-            return `معرفی شرکت نوین صنعت پرتو گستر وندا\n\n`
-                 + `شرکت نوین صنعت پرتو گستر وندا با سابقه درخشان در تولید دستگاه‌های جوش و برش لیزری، پیشرو در فناوری‌های روز دنیاست.\n\n`
-                 + `ویژگی‌های متمایز ما:\n`
-                 + `• تیم متخصص از فارغ‌التحصیلان دانشگاه شهید بهشتی\n`
-                 + `• ۱۰ سال سابقه درخشان در صنایع اپتیک\n`
-                 + `• تولید با کیفیت جهانی و استانداردهای بین‌المللی\n`
-                 + `• پشتیبانی از معاونت علمی و فناوری ریاست جمهوری\n`
-                 + `• ارائه خدمات پس از فروش جامع و مطمئن\n\n`
-                 + `ماموریت ما: ارائه بهترین راهکارهای لیزری برای صنعت کشور\n`
-                 + `چشم‌انداز ما: پیشتازی در تکنولوژی‌های لیزری در منطقه`;
-
-        case 'application':
-            return `کاربردهای ${primaryItem.value}\n\n`
-                 + `محصولات ما در صنایع مختلفی کاربرد دارند:\n\n`
-                 + `• صنعت خودرو سازی - جوشکاری بدنه و قطعات\n`
-                 + `• صنایع نفت و گاز - تعمیر و نگهداری تجهیزات\n`
-                 + `• صنایع غذایی و دارویی - ساخت تجهیزات استریل\n`
-                 + `• ساخت و ساز - تولید سازه‌های فلزی\n`
-                 + `• صنایع الکترونیک - تولید قطعات حساس\n\n`
-                 + `مزیت رقابتی: دقت بالا، سرعت عمل و کیفیت بی‌نظیر`;
-
-        default:
-            // پاسخ عمومی با اطلاعات ترکیبی
-            let generalResponse = `پاسخ به سوال شما درباره ${primaryItem.value}\n\n`;
+        // جستجو در مشخصات فنی
+        if (jsonData.technical_specs) {
+            if (jsonData.technical_specs.materials && jsonData.technical_specs.materials.fa) {
+                const matchingMaterials = jsonData.technical_specs.materials.fa.filter(material => 
+                    material.toLowerCase().includes(lowerQuery)
+                );
+                if (matchingMaterials.length > 0) {
+                    return `🔩 مواد قابل جوش:\n\n${matchingMaterials.map(material => `• ${material}`).join('\n')}`;
+                }
+            }
             
-            matchedItems.slice(0, 3).forEach(item => {
-                generalResponse += `${item.value}\n`;
-            });
-            
-            generalResponse += `\nشرکت نوین صنعت پرتو گستر وندا با افتخار بهترین خدمات و محصولات را با گارانتی و پشتیبانی کامل ارائه می‌دهد.\n\n`
-                            + `برای اطلاعات تخصصی‌تر و مشاوره رایگان، با ما تماس بگیرید:\n`
-                            + `۰۲۱-۹۱۰۹۷۰۹۷`;
-            
-            return generalResponse;
+            if (jsonData.technical_specs.laser_sources && jsonData.technical_specs.laser_sources.fa) {
+                const matchingSources = jsonData.technical_specs.laser_sources.fa.filter(source => 
+                    source.toLowerCase().includes(lowerQuery)
+                );
+                if (matchingSources.length > 0) {
+                    return `⚡ منابع لیزری:\n\n${matchingSources.map(source => `• ${source}`).join('\n')}`;
+                }
+            }
+        }
+
+        // جستجو در کاربردها
+        if (jsonData.products_services?.applications?.fa) {
+            const matchingApps = jsonData.products_services.applications.fa.filter(app => 
+                app.toLowerCase().includes(lowerQuery)
+            );
+            if (matchingApps.length > 0) {
+                return `🏭 کاربردها:\n\n${matchingApps.map(app => `• ${app}`).join('\n')}`;
+            }
+        }
+
+        console.log("❌ هیچ نتیجه‌ای در JSON یافت نشد");
+        return null;
+
+    } catch (error) {
+        console.error("❌ خطا در جستجوی JSON:", error);
+        return null;
     }
 }
 
@@ -818,7 +767,7 @@ async function enhanceWithAI(baseResponse, userQuestion, lang) {
         const prompt = `
         شما یک بازاریاب و فروشنده حرفه‌ای برای شرکت "نوین صنعت پرتو گستر وندا" هستید.
         
-        پاسخ پایه: ${baseResponse}
+        پاسخ پایه از داده‌های شرکت: ${baseResponse}
         سوال کاربر: ${userQuestion}
         
         لطفاً پاسخ فوق را به صورت حرفه‌ای، جذاب و فروشنده‌ای بازنویسی کنید. 
@@ -967,11 +916,14 @@ async function sendMessage() {
   // جستجو در داده‌های JSON
   const jsonReply = searchJSON(content, lang);
   if (jsonReply) {
+    console.log("✅ پاسخ از JSON یافت شد");
     // بهبود پاسخ با هوش مصنوعی
     const enhancedReply = await enhanceWithAI(jsonReply, content, lang);
     await simulateTyping(enhancedReply);
     return;
   }
+
+  console.log("🔍 پاسخ در JSON یافت نشد، استفاده از هوش مصنوعی...");
 
   // استفاده از هوش مصنوعی برای سوالات عمومی
   try {
@@ -998,6 +950,7 @@ async function sendMessage() {
     let reply = data.choices?.[0]?.message?.content || (lang === 'fa' ? 'پاسخ نامشخص دریافت شد.' : 'Unknown response received.');
     await simulateTyping(reply);
   } catch (err) {
+    console.error("❌ خطا در ارتباط با هوش مصنوعی:", err);
     await simulateTyping(lang === 'fa' ? 'خطا در اتصال یا اعتبار توکن.' : 'Token error or connection failed.');
   } finally {
     // بازگشت دکمه به حالت ارسال
@@ -1044,11 +997,16 @@ async function simulateTyping(text) {
 window.addEventListener('load', () => {
   const welcomeMsg = { 
     role: "assistant", 
-    content: "سلام! به دستیار هوشمند شرکت نوین صنعت پرتو گستر وندا خوش آمدید!\n\nمن اینجام تا در مورد:\n• دستگاه‌های جوش و برش لیزری\n• محصولات و خدمات شرکت\n• مشخصات فنی و قیمت‌ها\n• اطلاعات تماس\n\nپاسخگوی شما باشم.\n\nچه سوالی دارید؟", 
+    content: "سلام! به دستیار هوشمند شرکت نوین صنعت پرتو گستر وندا خوش آمدید!\n\nدر حال بارگذاری اطلاعات شرکت...", 
     time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) 
   };
   messages.push(welcomeMsg);
   renderMessages();
+  
+  // بارگذاری داده‌های JSON پس از لود صفحه
+  setTimeout(() => {
+    loadJSON();
+  }, 1000);
 });
 </script>
 </body>
