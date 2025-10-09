@@ -67,7 +67,6 @@
     <button class="send-btn" onclick="sendMessage()">ارسال</button>
   </div>
 </div>
-
 <script>
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
@@ -80,6 +79,7 @@ let messages = [];
 let typingInterval = null;
 let stopTyping = false;
 let jsonData = null;
+const GAP_TOKEN = "sk-T15TGdP9wukEdUzMiP6dJRIYI0oQ1mbx0jdtS7SDAmuZor4G";
 
 async function loadJSON() {
   try {
@@ -114,8 +114,7 @@ function openChat() {
   chatToggleBtn.classList.add('active');
   if (window.innerWidth <= 768) {
     chatToggleBtn.style.visibility = 'hidden';
-    chatToggleBtn.style.opacity
-        chatToggleBtn.style.opacity = '0';
+    chatToggleBtn.style.opacity = '0';
   }
 }
 
@@ -209,41 +208,38 @@ async function sendMessage() {
     return;
   }
 
-  const tokens = [
-    "sk-O04WeiK7sWKfKQbzpFj9ilNFvOiS7VpgZJNbpXHaVEqGAYVG",
-    "sk-ZLf92w8qWXqhkA8gf2tmpFasGzb9d9Et5ymcdM2RIr8PAqDm"
-  ];
+  try {
+    const apiResponse = await fetch("https://api.gapgpt.app/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GAP_TOKEN}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: messages.map(({ role, content }) => ({ role, content })),
+        max_tokens: 400
+      })
+    });
 
-  for (let token of tokens) {
-    try {
-      const apiResponse = await fetch("https://api.gapgpt.app/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: messages.map(({ role, content }) => ({ role, content })),
-          max_tokens: 400
-        })
-      });
-
-      const data = await apiResponse.json();
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        let reply = data.choices[0].message.content;
-        if (/(کد|برنامه|تبدیل|محاسبه|run|code)/i.test(content)) {
-          reply = lang === 'fa' ? 'متاسفم، من محدود هستم و نمی‌توانم این کار را انجام دهم.' : 'Sorry, I am limited and cannot do that.';
-        }
-        await simulateTyping(reply);
-        return;
+    const data = await apiResponse.json();
+    if (data.choices?.[0]?.message) {
+      let reply = data.choices[0].message.content;
+      if (/(کد|برنامه|تبدیل|محاسبه|run|code)/i.test(content)) {
+        reply = lang === 'fa' ? 'متاسفم، من محدود هستم و نمی‌توانم این کار را انجام دهم.' : 'Sorry, I am limited and cannot do that.';
       }
-    } catch (err) {
-      console.warn(`توکن ${token} با خطا مواجه شد`, err);
+      await simulateTyping(reply);
+    } else if (data.error) {
+      let errorText = `❌ خطا از GAP API\nکد وضعیت: ${apiResponse.status}\nپیام: ${data.error.message}`;
+      if (data.error.code) errorText += `\nکد خطا: ${data.error.code}`;
+      if (data.error.request_id) errorText += `\nشناسه درخواست: ${data.error.request_id}`;
+      await simulateTyping(errorText);
+    } else {
+      await simulateTyping(lang === 'fa' ? 'پاسخ نامشخص دریافت شد.' : 'Unknown response received.');
     }
+  } catch (err) {
+    await simulateTyping(lang === 'fa' ? 'خطا در اتصال یا اعتبار توکن.' : 'Token error or connection failed.');
   }
-
-  await simulateTyping(lang === 'fa' ? 'مشکلی پیش آمد، پاسخ دریافت نشد.' : 'An error occurred, no response received.');
 }
 
 async function simulateTyping(text) {
