@@ -1,47 +1,47 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BK-AI Chat Multilingual</title>
-  <style>
-    body{margin:0;font-family:'Vazir','Segoe UI',sans-serif;background:#f9fafb;}
-    .chat-toggle-btn{position:fixed;bottom:20px;right:20px;width:70px;height:70px;background-color:#8b5cf6;border:none;border-radius:50%;cursor:pointer;z-index:1001;display:flex;align-items:center;justify-content:center;overflow:visible;box-shadow:0 8px 20px rgba(139,92,246,0.4);transition:all 0.4s ease;}
-    .chat-toggle-btn:hover{background-color:#22c55e;}
-    .chat-toggle-btn img{width:40px;height:40px;position:absolute;transition:transform 0.3s ease;}
-    #botIconNormal{filter:brightness(100%) grayscale(100%);}
-    #botIconActive{display:none;filter:brightness(0%) grayscale(100%) invert(100%);}
-    .chat-toggle-btn:hover #botIconNormal{transform:scale(1.2); filter:brightness(0%) grayscale(100%) invert(100%);}
-    .chat-toggle-btn.active{background-color:#22c55e;}
-    .chat-toggle-btn.active #botIconNormal{display:none;}
-    .chat-toggle-btn.active #botIconActive{display:block;}
-    .pulse-circle{position:absolute;border-radius:50%;background-color:rgba(34,197,94,0.3);z-index:-1;animation:pulse 2s infinite ease-in-out;}
-    .circle1{width:80px;height:80px;}
-    .circle2{width:100px;height:100px;animation-delay:1s;}
-    @keyframes pulse{0%{transform:scale(0.9);opacity:0.7;}50%{transform:scale(1.1);opacity:0.3;}100%{transform:scale(0.9);opacity:0.7;}}
-    #chatContainer{display:none;position:fixed;bottom:90px;right:20px;width:400px;height:600px;background:white;border-radius:20px;box-shadow:0 0 25px rgba(0,0,0,0.15);overflow:hidden;z-index:1000;flex-direction:column;transition:all 0.4s ease;}
-    @media(max-width:768px){#chatContainer{width:100%;height:100%;bottom:0;right:0;border-radius:0;}}
-    .chat-header{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:white;padding:1rem;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:1rem;box-shadow:0 4px 10px rgba(0,0,0,0.15);position:relative;}
-    .chat-header .chat-title{display:flex;align-items:center;gap:10px;}
-    .chat-header img{width:30px;height:30px;border-radius:50%;background:white;padding:4px;}
-    .header-btns{display:flex;align-items:center;gap:10px;}
-    .header-btn{background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;border-radius:50%;width:36px;height:36px;cursor:pointer;transition:all 0.3s ease;position:relative;overflow:visible;}
-    .header-btn:hover{background:rgba(255,255,255,0.35);transform:scale(1.15);}
-    .header-btn .tooltip{position:absolute;top:50%;right:120%;transform:translateY(-50%);background:rgba(17,24,39,0.9);color:white;padding:5px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;opacity:0;transition:all 0.3s ease;pointer-events:none;}
-    .header-btn:hover .tooltip{right:140%;opacity:1;}
-    .chat-box{flex:1;overflow-y:auto;padding:1rem;background:#f9fafb;}
-    .message{margin-bottom:1rem;padding:0.6rem 0.8rem;border-radius:12px;max-width:80%;line-height:1.6;white-space:pre-wrap;position:relative;}
-    .user{background:#dbeafe;margin-left:auto;}
-    .assistant{background:#f3f4f6;margin-right:auto;}
-    .msg-time{display:block;text-align:right;font-size:0.75rem;color:#9ca3af;margin-top:4px;}
-    .user .msg-time{text-align:left;}
-    .input-area{display:flex;padding:0.8rem;gap:0.5rem;border-top:1px solid #ddd;background:#fff;}
-    input[type="text"]{flex:1;padding:0.6rem;font-size:1rem;border-radius:8px;border:1px solid #ccc;}
-    button.send-btn{background:#3b82f6;color:white;border:none;border-radius:8px;padding:0.6rem 1rem;font-size:1rem;cursor:pointer;transition:all 0.2s ease;}
-    button.send-btn:hover{background:#2563eb;}
-    button.send-btn:disabled{background:#a5b4fc;cursor:not-allowed;}
-    .typing{font-style:italic;color:#6b7280;padding:0.5rem 1rem;display:none;}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BK-AI Chat Multilingual</title>
+<style>
+body{margin:0;font-family:'Vazir','Segoe UI',sans-serif;background:#f9fafb;}
+.chat-toggle-btn{position:fixed;bottom:20px;right:20px;width:70px;height:70px;background-color:#8b5cf6;border:none;border-radius:50%;cursor:pointer;z-index:1001;display:flex;align-items:center;justify-content:center;overflow:visible;box-shadow:0 8px 20px rgba(139,92,246,0.4);transition:all 0.4s ease;}
+.chat-toggle-btn:hover{background-color:#22c55e;}
+.chat-toggle-btn img{width:40px;height:40px;position:absolute;transition:transform 0.3s ease;}
+#botIconNormal{filter:brightness(100%) grayscale(100%);}
+#botIconActive{display:none;filter:brightness(0%) grayscale(100%) invert(100%);}
+.chat-toggle-btn:hover #botIconNormal{transform:scale(1.2); filter:brightness(0%) grayscale(100%) invert(100%);}
+.chat-toggle-btn.active{background-color:#22c55e;}
+.chat-toggle-btn.active #botIconNormal{display:none;}
+.chat-toggle-btn.active #botIconActive{display:block;}
+.pulse-circle{position:absolute;border-radius:50%;background-color:rgba(34,197,94,0.3);z-index:-1;animation:pulse 2s infinite ease-in-out;}
+.circle1{width:80px;height:80px;}
+.circle2{width:100px;height:100px;animation-delay:1s;}
+@keyframes pulse{0%{transform:scale(0.9);opacity:0.7;}50%{transform:scale(1.1);opacity:0.3;}100%{transform:scale(0.9);opacity:0.7;}}
+#chatContainer{display:none;position:fixed;bottom:90px;right:20px;width:400px;height:600px;background:white;border-radius:20px;box-shadow:0 0 25px rgba(0,0,0,0.15);overflow:hidden;z-index:1000;flex-direction:column;transition:all 0.4s ease;}
+@media(max-width:768px){#chatContainer{width:100%;height:100%;bottom:0;right:0;border-radius:0;}}
+.chat-header{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:white;padding:1rem;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:1rem;box-shadow:0 4px 10px rgba(0,0,0,0.15);position:relative;}
+.chat-header .chat-title{display:flex;align-items:center;gap:10px;}
+.chat-header img{width:30px;height:30px;border-radius:50%;background:white;padding:4px;}
+.header-btns{display:flex;align-items:center;gap:10px;}
+.header-btn{background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;border-radius:50%;width:36px;height:36px;cursor:pointer;transition:all 0.3s ease;position:relative;overflow:visible;}
+.header-btn:hover{background:rgba(255,255,255,0.35);transform:scale(1.15);}
+.header-btn .tooltip{position:absolute;top:50%;right:120%;transform:translateY(-50%);background:rgba(17,24,39,0.9);color:white;padding:5px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;opacity:0;transition:all 0.3s ease;pointer-events:none;}
+.header-btn:hover .tooltip{right:140%;opacity:1;}
+.chat-box{flex:1;overflow-y:auto;padding:1rem;background:#f9fafb;}
+.message{margin-bottom:1rem;padding:0.6rem 0.8rem;border-radius:12px;max-width:80%;line-height:1.6;white-space:pre-wrap;position:relative;}
+.user{background:#dbeafe;margin-left:auto;}
+.assistant{background:#f3f4f6;margin-right:auto;}
+.msg-time{display:block;text-align:right;font-size:0.75rem;color:#9ca3af;margin-top:4px;}
+.user .msg-time{text-align:left;}
+.input-area{display:flex;padding:0.8rem;gap:0.5rem;border-top:1px solid #ddd;background:#fff;}
+input[type="text"]{flex:1;padding:0.6rem;font-size:1rem;border-radius:8px;border:1px solid #ccc;}
+button.send-btn{background:#3b82f6;color:white;border:none;border-radius:8px;padding:0.6rem 1rem;font-size:1rem;cursor:pointer;transition:all 0.2s ease;}
+button.send-btn:hover{background:#2563eb;}
+button.send-btn:disabled{background:#a5b4fc;cursor:not-allowed;}
+.typing{font-style:italic;color:#6b7280;padding:0.5rem 1rem;display:none;}
+</style>
 </head>
 <body>
 
@@ -82,8 +82,13 @@ let typingInterval = null;
 let stopTyping = false;
 let jsonData = null;
 const GAP_TOKEN = "sk-T15TGdP9wukEdUzMiP6dJRIYI0oQ1mbx0jdtS7SDAmuZor4G";
-let isTyping = false; // ⚡ فلگ جلوگیری از ارسال همزمان
+let isTyping = false;
 
+// ⚡ محدودیت درخواست‌ها
+const RESTRICT_LIMIT = 3;
+const BLOCK_HOURS = 5;
+
+// 🚀 بارگذاری JSON داده شرکت
 async function loadJSON() {
   try {
     const res = await fetch('https://raw.githubusercontent.com/mahdiklidari190/AI-PRO/main/data.json');
@@ -95,6 +100,7 @@ async function loadJSON() {
 }
 loadJSON();
 
+// تشخیص زبان
 function detectLanguage(text){
   const persian = /[\u0600-\u06FF]/;
   const arabic = /[\u0750-\u077F\u08A0-\u08FF]/;
@@ -103,66 +109,53 @@ function detectLanguage(text){
   return 'en';
 }
 
-function callCreator() {
-  window.location.href = "tel:09211243320";
-}
-
-function toggleChat() {
-  if (chatContainer.style.display === 'flex') closeChat();
-  else openChat();
-}
-
-function openChat() {
-  chatContainer.style.display = 'flex';
+// دکمه تماس
+function callCreator() { window.location.href = "tel:09211243320"; }
+function toggleChat() { chatContainer.style.display==='flex'?closeChat():openChat(); }
+function openChat(){
+  chatContainer.style.display='flex';
   chatToggleBtn.classList.add('active');
-  if (window.innerWidth <= 768) {
-    chatToggleBtn.style.visibility = 'hidden';
-    chatToggleBtn.style.opacity = '0';
-  }
+  if(window.innerWidth<=768){chatToggleBtn.style.visibility='hidden';chatToggleBtn.style.opacity='0';}
 }
-
-function closeChat() {
-  chatContainer.style.display = 'none';
+function closeChat(){
+  chatContainer.style.display='none';
   chatToggleBtn.classList.remove('active');
-  if (window.innerWidth <= 768) {
-    chatToggleBtn.style.visibility = 'visible';
-    chatToggleBtn.style.opacity = '1';
-  }
+  if(window.innerWidth<=768){chatToggleBtn.style.visibility='visible';chatToggleBtn.style.opacity='1';}
 }
 
-function renderMessages() {
-  chatBox.innerHTML = '';
-  messages.forEach(msg => {
-    const div = document.createElement("div");
-    div.className = "message " + (msg.role === "user" ? "user" : "assistant");
-    div.innerHTML = `${msg.content}<span class="msg-time">${msg.time || ""}</span>`;
+// رندر پیام‌ها
+function renderMessages(){
+  chatBox.innerHTML='';
+  messages.forEach(msg=>{
+    const div=document.createElement("div");
+    div.className="message "+(msg.role==="user"?"user":"assistant");
+    div.innerHTML=`${msg.content}<span class="msg-time">${msg.time||""}</span>`;
     chatBox.appendChild(div);
   });
-  chatBox.scrollTop = chatBox.scrollHeight;
+  chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-function searchJSON(query, lang) {
-  if (!jsonData) return null;
-  query = query.toLowerCase();
-
-  if (jsonData.company.name.toLowerCase().includes(query)) {
-    let text = `نام شرکت: ${jsonData.company.name}\nتلفن‌ها: ${jsonData.company.phones.join(', ')}\nآدرس دفتر: ${jsonData.company.addresses.office}\nساعت کاری: ${jsonData.company.working_hours}`;
-    if (lang !== 'fa') text = translateToEnglish(text);
+// جستجو در JSON
+function searchJSON(query, lang){
+  if(!jsonData) return null;
+  query=query.toLowerCase();
+  if(jsonData.company.name.toLowerCase().includes(query)){
+    let text=`نام شرکت: ${jsonData.company.name}\nتلفن‌ها: ${jsonData.company.phones.join(', ')}\nآدرس دفتر: ${jsonData.company.addresses.office}\nساعت کاری: ${jsonData.company.working_hours}`;
+    if(lang!=='fa') text=translateToEnglish(text);
     return text;
   }
-
-  for (const page of jsonData.pages) {
-    if (page.title.toLowerCase().includes(query) || (page.summary && page.summary.toLowerCase().includes(query))) {
-      let text = `${page.title}\n${page.summary || ''}`;
-      if (page.items) text += '\nموارد: ' + page.items.map(i => i.title).join(', ');
-      if (lang !== 'fa') text = translateToEnglish(text);
+  for(const page of jsonData.pages){
+    if(page.title.toLowerCase().includes(query)||(page.summary&&page.summary.toLowerCase().includes(query))){
+      let text=`${page.title}\n${page.summary||''}`;
+      if(page.items) text+='\nموارد: '+page.items.map(i=>i.title).join(', ');
+      if(lang!=='fa') text=translateToEnglish(text);
       return text;
     }
-    if (page.products) {
-      let found = page.products.find(p => p.title.toLowerCase().includes(query));
-      if (found) {
-        let text = `محصول: ${found.title}\nلینک: ${found.url}`;
-        if (lang !== 'fa') text = translateToEnglish(text);
+    if(page.products){
+      let found=page.products.find(p=>p.title.toLowerCase().includes(query));
+      if(found){
+        let text=`محصول: ${found.title}\nلینک: ${found.url}`;
+        if(lang!=='fa') text=translateToEnglish(text);
         return text;
       }
     }
@@ -170,116 +163,162 @@ function searchJSON(query, lang) {
   return null;
 }
 
-function translateToEnglish(text) {
-  const mapping = {
-    "نام شرکت": "Company Name",
-    "تلفن‌ها": "Phones",
-    "آدرس دفتر": "Office Address",
-    "ساعت کاری": "Working Hours",
-    "موارد": "Items",
-    "محصول": "Product"
-  };
-  for (const key in mapping) {
-    text = text.replaceAll(key, mapping[key]);
-  }
+function translateToEnglish(text){
+  const mapping={"نام شرکت":"Company Name","تلفن‌ها":"Phones","آدرس دفتر":"Office Address","ساعت کاری":"Working Hours","موارد":"Items","محصول":"Product"};
+  for(const key in mapping) text=text.replaceAll(key,mapping[key]);
   return text;
 }
 
-// جلوگیری از ارسال همزمان
-userInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    if (!isTyping) sendMessage();
+// ⚡ محدودیت محتوا
+const restrictedPatterns=[
+  /(کد|برنامه|تبدیل|محاسبه|run|code)/i,
+  /(جوک|داستان|شعر|عاشقانه|حوصله|روانشناسی|پزشکی|حقوقی|تحصیلی)/i,
+  /(فال|پیش‌بینی|فلسفی|دینی)/i,
+  /(دوست داشتن|عاشق|رابطه|زندگی شخصی)/i,
+  /(سیاست|ورزش|فیلم|موسیقی|افراد مشهور)/i,
+  /(هک|نفوذ|محرمانه|لینک مشکوک)/i
+];
+function checkRestrictedContent(text){
+  return restrictedPatterns.some(p=>p.test(text));
+}
+
+// ⚡ بررسی بلاک
+function checkBlockStatus(){
+  const blockData=JSON.parse(localStorage.getItem('blockData')||'{}');
+  if(blockData.expire && new Date(blockData.expire)>new Date()) return true;
+  localStorage.removeItem('blockData');
+  return false;
+}
+
+// ⚡ ثبت هشدار و بلاک
+function recordRestriction(lang){
+  let count=parseInt(localStorage.getItem('restrictionCount')||'0')+1;
+  localStorage.setItem('restrictionCount',count);
+  if(count>=RESTRICT_LIMIT){
+    const expireDate=new Date();
+    expireDate.setHours(expireDate.getHours()+BLOCK_HOURS);
+    localStorage.setItem('blockData',JSON.stringify({expire:expireDate}));
+    localStorage.setItem('restrictionCount',0);
   }
+  return count;
+}
+
+// ⚡ پیام هشدار محدودیت
+function getWarningMessage(lang,count){
+  const messages={
+    fa:`⚠️ هشدار: شما ${count} بار سوال خارج از حوزه پرسیده‌اید. ادامه دادن باعث مسدود شدن حساب شما به مدت ${BLOCK_HOURS} ساعت می‌شود.`,
+    en:`⚠️ Warning: You have asked ${count} out-of-scope questions. Continuing will block your account for ${BLOCK_HOURS} hours.`,
+    ar:`⚠️ تحذير: لقد طرحت ${count} أسئلة خارج النطاق. الاستمرار سيؤدي إلى حظر حسابك لمدة ${BLOCK_HOURS} ساعة.`,
+    fr:`⚠️ Attention : Vous avez posé ${count} questions hors sujet. Continuer bloquera votre compte pendant ${BLOCK_HOURS} heures.`,
+    es:`⚠️ Advertencia: Has hecho ${count} preguntas fuera de alcance. Continuar bloqueará tu cuenta por ${BLOCK_HOURS} horas.`,
+    de:`⚠️ Warnung: Sie haben ${count} Fragen außerhalb des Bereichs gestellt. Weiter führt zu einer Sperrung Ihres Kontos für ${BLOCK_HOURS} Stunden.`,
+    zh:`⚠️ 警告：您已提出${count}个超出范围的问题。继续将导致您的账户被封锁${BLOCK_HOURS}小时。`,
+    ru:`⚠️ Внимание: Вы задали ${count} вопросов вне области. Продолжение заблокирует ваш аккаунт на ${BLOCK_HOURS} часов.`
+  };
+  return messages[lang]||messages['en'];
+}
+
+// ⚡ پیام محدودیت استاندارد
+function getRestrictionMessage(lang){
+  const messages={
+    fa:'متاسفم، من فقط در زمینه معرفی شرکت، محصولات و خدمات آن پاسخگو هستم.\nلطفاً سوالات خود را در این حوزه مطرح کنید.',
+    en:'Sorry, I only respond regarding company introduction, products, and services.\nPlease ask questions in this domain.',
+    ar:'عذراً، أنا أجيب فقط حول الشركة، منتجاتها وخدماتها.\nيرجى طرح الأسئلة في هذا المجال.',
+    fr:'Désolé, je ne réponds que concernant la société, ses produits et services.\nVeuillez poser vos questions dans ce domaine.',
+    es:'Lo siento, solo respondo sobre la empresa, productos y servicios.\nPor favor haga preguntas en este ámbito.',
+    de:'Entschuldigung, ich beantworte nur Fragen zur Firma, Produkten und Dienstleistungen.\nBitte stellen Sie Fragen in diesem Bereich.',
+    zh:'抱歉，我只回答有关公司、产品和服务的问题。\n请在此范围内提问。',
+    ru:'Извините, я отвечаю только по поводу компании, продуктов и услуг.\nПожалуйста, задавайте вопросы в этой области.'
+  };
+  return messages[lang]||messages['en'];
+}
+
+// جلوگیری از ارسال همزمان
+userInput.addEventListener("keydown",function(e){
+  if(e.key==="Enter"){ e.preventDefault(); if(!isTyping) sendMessage(); }
 });
 
-async function sendMessage() {
-  if (isTyping) return; // 🔒 فلگ
-  const content = userInput.value.trim();
-  if (!content) return;
+// ⚡ ارسال پیام با محدودیت
+async function sendMessage(){
+  if(isTyping) return;
+  const content=userInput.value.trim();
+  if(!content) return;
+  const lang=detectLanguage(content);
 
-  const timeStr = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-  messages.push({ role: "user", content, time: timeStr });
-  renderMessages();
-  userInput.value = "";
-
-  typingIndicator.style.display = 'block';
-  sendBtn.textContent = 'توقف';
-  sendBtn.disabled = false;
-  sendBtn.onclick = () => { stopTyping = true; };
-  stopTyping = false;
-  isTyping = true;
-  sendBtn.disabled = true; // 🔒 دکمه ارسال غیرفعال
-
-  const lang = detectLanguage(content);
-  const jsonReply = searchJSON(content, lang);
-  if (jsonReply) {
-    await simulateTyping(jsonReply);
+  // بررسی بلاک
+  if(checkBlockStatus()){
+    const msg=getRestrictionMessage(lang)+'\n⛔ شما به مدت '+BLOCK_HOURS+' ساعت مسدود شده‌اید.';
+    const timeStr=new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+    messages.push({role:"assistant",content:msg,time:timeStr});
+    renderMessages();
+    userInput.value="";
     return;
   }
 
-  try {
-    const apiResponse = await fetch("https://api.gapgpt.app/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${GAP_TOKEN}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: messages.map(({ role, content }) => ({ role, content })),
-        max_tokens: 400
-      })
+  // بررسی محدودیت محتوا
+  if(checkRestrictedContent(content)){
+    const count=recordRestriction(lang);
+    const warningMsg=getWarningMessage(lang,count);
+    const msg=getRestrictionMessage(lang)+'\n'+warningMsg;
+    const timeStr=new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+    messages.push({role:"assistant",content:msg,time:timeStr});
+    renderMessages();
+    userInput.value="";
+    return;
+  }
+
+  // ادامه روند معمول ارسال پیام
+  const timeStr=new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+  messages.push({role:"user",content,time:timeStr});
+  renderMessages();
+  userInput.value="";
+  typingIndicator.style.display='block';
+  sendBtn.textContent='توقف';
+  sendBtn.disabled=false;
+  sendBtn.onclick=()=>{stopTyping=true;};
+  stopTyping=false;
+  isTyping=true;
+  sendBtn.disabled=true;
+
+  const jsonReply=searchJSON(content,lang);
+  if(jsonReply){ await simulateTyping(jsonReply); return; }
+
+  try{
+    const apiResponse=await fetch("https://api.gapgpt.app/v1/chat/completions",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${GAP_TOKEN}`},
+      body:JSON.stringify({model:"gpt-4o",messages:messages.map(({role,content})=>({role,content})),max_tokens:400})
     });
-
-    const data = await apiResponse.json();
-    let reply = '';
-
-    if (data.choices?.[0]?.message) {
-      reply = data.choices[0].message.content;
-      if (/(کد|برنامه|تبدیل|محاسبه|run|code)/i.test(content)) {
-        reply = lang === 'fa' ? 'متاسفم، من محدود هستم و نمی‌توانم این کار را انجام دهم.' : 'Sorry, I am limited and cannot do that.';
-      }
-    } else if (data.error) {
-      reply = `❌ خطا از GAP API\nکد وضعیت: ${apiResponse.status}\nپیام: ${data.error.message}`;
-      if (data.error.code) reply += `\nکد خطا: ${data.error.code}`;
-      if (data.error.request_id) reply += `\nشناسه درخواست: ${data.error.request_id}`;
-    } else {
-      reply = lang === 'fa' ? 'پاسخ نامشخص دریافت شد.' : 'Unknown response received.';
-    }
-
+    const data=await apiResponse.json();
+    let reply=data.choices?.[0]?.message?.content||(lang==='fa'?'پاسخ نامشخص دریافت شد.':'Unknown response received.');
     await simulateTyping(reply);
-  } catch (err) {
-    await simulateTyping(lang === 'fa' ? 'خطا در اتصال یا اعتبار توکن.' : 'Token error or connection failed.');
+  }catch(err){
+    await simulateTyping(lang==='fa'?'خطا در اتصال یا اعتبار توکن.':'Token error or connection failed.');
   }
 }
 
-async function simulateTyping(text) {
-  messages.push({
-    role: "assistant",
-    content: "",
-    time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })
-  });
+// شبیه‌سازی تایپ
+async function simulateTyping(text){
+  messages.push({role:"assistant",content:"",time:new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})});
   renderMessages();
-  let i = 0;
-
-  return new Promise(resolve => {
-    typingInterval = setInterval(() => {
-      if (stopTyping || i >= text.length) {
+  let i=0;
+  return new Promise(resolve=>{
+    typingInterval=setInterval(()=>{
+      if(stopTyping||i>=text.length){
         clearInterval(typingInterval);
-        typingIndicator.style.display = 'none';
-        sendBtn.textContent = 'ارسال';
-        sendBtn.disabled = false;
-        sendBtn.onclick = sendMessage;
-        isTyping = false; // پایان تایپ
+        typingIndicator.style.display='none';
+        sendBtn.textContent='ارسال';
+        sendBtn.disabled=false;
+        sendBtn.onclick=sendMessage;
+        isTyping=false;
         renderMessages();
         resolve();
         return;
       }
-      messages[messages.length - 1].content += text[i];
+      messages[messages.length-1].content+=text[i];
       renderMessages();
       i++;
-    }, 30);
+    },30);
   });
 }
 </script>
