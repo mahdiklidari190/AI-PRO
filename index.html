@@ -28,15 +28,6 @@
   --bot-msg-dark: #1f2937;
 }
 
-[data-theme="dark"] {
-  --bg-light: var(--bg-dark);
-  --text-light: var(--text-dark);
-  --border-light: var(--border-dark);
-  --shadow-light: var(--shadow-dark);
-  --user-msg: var(--user-msg-dark);
-  --bot-msg: var(--bot-msg-dark);
-}
-
 * {
   box-sizing: border-box;
 }
@@ -174,6 +165,39 @@ body {
 #chatContainer.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* استایل‌های مربوط به تم تاریک فقط برای پنجره چت */
+#chatContainer[data-theme="dark"] {
+  --bg-light: var(--bg-dark);
+  --text-light: var(--text-dark);
+  --border-light: var(--border-dark);
+  --shadow-light: var(--shadow-dark);
+  --user-msg: var(--user-msg-dark);
+  --bot-msg: var(--bot-msg-dark);
+}
+
+#chatContainer[data-theme="dark"] .input-area,
+#chatContainer[data-theme="dark"] {
+  background: var(--bg-dark);
+}
+
+#chatContainer[data-theme="dark"] input[type="text"] {
+  background: var(--bg-dark);
+  border-color: var(--border-dark);
+  color: var(--text-dark);
+}
+
+#chatContainer[data-theme="dark"] .message.user { 
+  background: var(--user-msg-dark); 
+}
+
+#chatContainer[data-theme="dark"] .message.assistant { 
+  background: var(--bot-msg-dark); 
+}
+
+#chatContainer[data-theme="dark"] .chat-box {
+  background: var(--bg-dark);
 }
 
 @media (max-width: 768px) {
@@ -456,21 +480,6 @@ button.stop-btn:hover:not(:disabled) {
   80%, 100% { content: '...'; }
 }
 
-/* تم تاریک */
-[data-theme="dark"] .input-area,
-[data-theme="dark"] #chatContainer {
-  background: var(--bg-dark);
-}
-
-[data-theme="dark"] input[type="text"] {
-  background: var(--bg-dark);
-  border-color: var(--border-dark);
-  color: var(--text-dark);
-}
-
-[data-theme="dark"] .message.user { background: var(--user-msg-dark); }
-[data-theme="dark"] .message.assistant { background: var(--bot-msg-dark); }
-
 .theme-toggle {
   background: rgba(255,255,255,0.15);
   border: none;
@@ -489,7 +498,7 @@ button.stop-btn:hover:not(:disabled) {
 }
 </style>
 </head>
-<body data-theme="light">
+<body>
 
 <!-- دکمه و پنجره چت - حالا در پایین سمت چپ -->
 <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
@@ -498,7 +507,7 @@ button.stop-btn:hover:not(:disabled) {
   <i class="fas fa-robot"></i>
 </button>
 
-<div id="chatContainer">
+<div id="chatContainer" data-theme="light">
   <div class="chat-header">
     <div class="chat-title">
       <img src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="bot"/>
@@ -626,18 +635,17 @@ function closeChat() {
   }
 }
 
-// تغییر تم
+// تغییر تم - فقط برای پنجره چت
 function toggleTheme() {
-  const body = document.body;
-  const currentTheme = body.getAttribute('data-theme');
+  const currentTheme = chatContainer.getAttribute('data-theme');
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  body.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
+  chatContainer.setAttribute('data-theme', newTheme);
+  localStorage.setItem('chat-theme', newTheme);
 }
 
 function initTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  document.body.setAttribute('data-theme', savedTheme);
+  const savedTheme = localStorage.getItem('chat-theme') || 'light';
+  chatContainer.setAttribute('data-theme', savedTheme);
 }
 initTheme();
 
