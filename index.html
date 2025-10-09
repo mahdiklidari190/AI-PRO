@@ -1,450 +1,287 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>BK-AI Chat — Company-focused Assistant</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BK-AI Chat Multilingual</title>
 <style>
-  /* سبک‌ها را مثل نسخهٔ قبلی نگه داشتم (مختصر) */
-  body{margin:0;font-family:'Vazir','Segoe UI',sans-serif;background:#f9fafb;}
-  .chat-toggle-btn{position:fixed;bottom:20px;right:20px;width:70px;height:70px;background:#8b5cf6;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:1001;box-shadow:0 8px 20px rgba(139,92,246,0.35);cursor:pointer;}
-  .chat-toggle-btn:hover{background:#22c55e;}
-  #chatContainer{display:none;position:fixed;bottom:90px;right:20px;width:420px;height:640px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.12);overflow:hidden;z-index:1000;display:flex;flex-direction:column;}
-  .chat-header{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;font-weight:600;}
-  .chat-box{flex:1;padding:12px;overflow:auto;background:#f7fafc;}
-  .message{margin-bottom:10px;padding:8px 10px;border-radius:12px;max-width:80%;white-space:pre-wrap;}
-  .user{background:#dbeafe;margin-left:auto;text-align:left;}
-  .assistant{background:#f3f4f6;margin-right:auto;text-align:left;}
-  .msg-time{font-size:11px;color:#9aa0a6;margin-top:6px;display:block;text-align:right;}
-  .input-area{display:flex;padding:10px;border-top:1px solid #e6e6e6;background:#fff;gap:8px;}
-  input[type=text]{flex:1;padding:10px;border-radius:8px;border:1px solid #ddd;}
-  button.send-btn{background:#3b82f6;border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;}
-  button.send-btn:disabled{background:#a5b4fc;cursor:not-allowed;}
-  .typing{font-style:italic;color:#6b7280;padding:6px 10px;display:none;}
-  .cta{margin-top:6px;padding:8px;border-radius:8px;background:linear-gradient(90deg,#fef3c7,#fde68a);}
-  .small{font-size:12px;color:#555;margin-top:6px;}
-  @media(max-width:768px){#chatContainer{width:100%;height:100%;right:0;bottom:0;border-radius:0;}}
+body{margin:0;font-family:'Vazir','Segoe UI',sans-serif;background:#f9fafb;}
+.chat-toggle-btn{position:fixed;bottom:20px;right:20px;width:70px;height:70px;background-color:#8b5cf6;border:none;border-radius:50%;cursor:pointer;z-index:1001;display:flex;align-items:center;justify-content:center;overflow:visible;box-shadow:0 8px 20px rgba(139,92,246,0.4);transition:all 0.4s ease;}
+.chat-toggle-btn:hover{background-color:#22c55e;}
+.chat-toggle-btn img{width:40px;height:40px;position:absolute;transition:transform 0.3s ease;}
+#botIconNormal{filter:brightness(100%) grayscale(100%);}
+#botIconActive{display:none;filter:brightness(0%) grayscale(100%) invert(100%);}
+.chat-toggle-btn:hover #botIconNormal{transform:scale(1.2); filter:brightness(0%) grayscale(100%) invert(100%);}
+.chat-toggle-btn.active{background-color:#22c55e;}
+.chat-toggle-btn.active #botIconNormal{display:none;}
+.chat-toggle-btn.active #botIconActive{display:block;}
+.pulse-circle{position:absolute;border-radius:50%;background-color:rgba(34,197,94,0.3);z-index:-1;animation:pulse 2s infinite ease-in-out;}
+.circle1{width:80px;height:80px;}
+.circle2{width:100px;height:100px;animation-delay:1s;}
+@keyframes pulse{0%{transform:scale(0.9);opacity:0.7;}50%{transform:scale(1.1);opacity:0.3;}100%{transform:scale(0.9);opacity:0.7;}}
+#chatContainer{display:none;position:fixed;bottom:90px;right:20px;width:400px;height:600px;background:white;border-radius:20px;box-shadow:0 0 25px rgba(0,0,0,0.15);overflow:hidden;z-index:1000;flex-direction:column;transition:all 0.4s ease,opacity 0.4s ease;opacity:0;}
+#chatContainer.show{opacity:1;}
+@media(max-width:768px){#chatContainer{width:100%;height:100%;bottom:0;right:0;border-radius:0;}}
+.chat-header{background:linear-gradient(90deg,#3b82f6,#8b5cf6);color:white;padding:1rem;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:1rem;box-shadow:0 4px 10px rgba(0,0,0,0.15);position:relative;}
+.chat-header .chat-title{display:flex;align-items:center;gap:10px;}
+.chat-header img{width:30px;height:30px;border-radius:50%;background:white;padding:4px;}
+.header-btns{display:flex;align-items:center;gap:10px;}
+.header-btn{background:rgba(255,255,255,0.15);border:none;color:white;font-size:1.2rem;border-radius:50%;width:36px;height:36px;cursor:pointer;transition:all 0.3s ease;position:relative;overflow:visible;}
+.header-btn:hover{background:rgba(255,255,255,0.35);transform:scale(1.15);}
+.header-btn .tooltip{position:absolute;top:50%;right:120%;transform:translateY(-50%);background:rgba(17,24,39,0.9);color:white;padding:5px 10px;border-radius:6px;font-size:0.8rem;white-space:nowrap;opacity:0;transition:all 0.3s ease;pointer-events:none;}
+.header-btn:hover .tooltip{right:140%;opacity:1;}
+.chat-box{flex:1;overflow-y:auto;padding:1rem;padding-bottom:70px;background:#f9fafb;}
+.message{margin-bottom:1rem;padding:0.6rem 0.8rem;border-radius:12px;max-width:80%;line-height:1.6;white-space:pre-wrap;position:relative;}
+.user{background:#dbeafe;margin-left:auto;}
+.assistant{background:#f3f4f6;margin-right:auto;}
+.msg-time{display:block;text-align:right;font-size:0.75rem;color:#9ca3af;margin-top:4px;}
+.user .msg-time{text-align:left;}
+.input-area{display:flex;padding:0.8rem;gap:0.5rem;border-top:1px solid #ddd;background:#fff;position:relative;z-index:1;}
+input[type="text"]{flex:1;padding:0.6rem;font-size:1rem;border-radius:8px;border:1px solid #ccc;}
+button.send-btn{background:#3b82f6;color:white;border:none;border-radius:8px;padding:0.6rem 1rem;font-size:1rem;cursor:pointer;transition:all 0.2s ease;}
+button.send-btn:hover{background:#2563eb;}
+button.send-btn:disabled{background:#a5b4fc;cursor:not-allowed;}
+.typing{position:absolute;bottom:70px;left:1rem;right:1rem;font-style:italic;color:#6b7280;display:none;}
 </style>
 </head>
 <body>
 
-<button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">💬</button>
+<!-- دکمه و پنجره چت -->
+<button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
+  <div class="pulse-circle circle1"></div>
+  <div class="pulse-circle circle2"></div>
+  <img id="botIconNormal" src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="ربات سفید"/>
+  <img id="botIconActive" src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="ربات فعال"/>
+</button>
 
-<div id="chatContainer" aria-hidden="true">
+<div id="chatContainer">
   <div class="chat-header">
-    <div>BK Assistant</div>
-    <div>
-      <button onclick="callCreator()" style="margin-right:8px;">📞</button>
-      <button onclick="closeChat()">✕</button>
+    <div class="chat-title"><img src="https://cdn-icons-png.flaticon.com/512/4712/4712026.png" alt="bot"/><span>BK Assistant</span></div>
+    <div class="header-btns">
+      <button class="header-btn" onclick="callCreator()">📞<span class="tooltip">تماس با سازنده</span></button>
+      <button class="header-btn" onclick="closeChat()">✕</button>
     </div>
   </div>
-
   <div class="chat-box" id="chatBox"></div>
-
   <div class="typing" id="typingIndicator">در حال نوشتن...</div>
-
   <div class="input-area">
-    <input id="userInput" type="text" placeholder="پیام خود را بنویسید..." />
-    <button id="sendBtn" class="send-btn" onclick="sendMessage()">ارسال</button>
+    <input type="text" id="userInput" placeholder="...پیام خود را بنویسید"/>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">ارسال</button>
   </div>
 </div>
 
 <script>
-/* =================== تنظیمات اصلی =================== */
-const GAP_TOKEN = "sk-T15TGdP9wukEdUzMiP6dJRIYI0oQ1mbx0jdtS7SDAmuZor4G"; // اگر لازمه عوض کن
-const JSON_URL = "https://raw.githubusercontent.com/mahdiklidari190/AI-PRO/main/data.json";
-
-/* نرخ‌دهی و بلاک (soft limits) */
-const SOFT_WINDOW_MS = 5 * 60 * 1000;    // پنجرهٔ نرم: 5 دقیقه
-const SOFT_LIMIT = 30;                   // تا 30 پیام در هر پنجره اجازهٔ طبیعی
-const WARN_THRESHOLD = 20;               // وقتی به 20 رسید هشدار بده
-const ABUSE_LIMIT = 60;                  // اگر خیلی زیاده (مثلاً DDoS-like) => بلوک کوتاه
-const SHORT_BLOCK_MS = 10 * 60 * 1000;   // بلوک کوتاه: 10 دقیقه برای رفتار خیلی خارج از عرف
-
-/* بلاک برای سوالات خارج از حوزه (که درخواست کردی): */
-const RESTRICT_LIMIT = 3;    // چند اخطار قبل از 5 ساعت بن
-const BLOCK_HOURS_FOR_RESTRICT = 5;
-
-/* متغیرهای داخلی */
-let messages = [];
-let jsonData = null;
-let typingInterval = null;
-let stopTyping = false;
-let isTyping = false;
-
-/* المان‌ها */
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
 const typingIndicator = document.getElementById('typingIndicator');
+const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chatContainer');
 const chatToggleBtn = document.getElementById('chatToggleBtn');
 
-/* =================== بارگیری JSON شرکت =================== */
+let messages=[];
+let typingInterval=null;
+let stopTyping=false;
+let jsonData=null;
+const GAP_TOKEN="sk-T15TGdP9wukEdUzMiP6dJRIYI0oQ1mbx0jdtS7SDAmuZor4G";
+let isTyping=false;
+const RESTRICT_LIMIT=3;
+const BLOCK_HOURS=5;
+
 async function loadJSON(){
   try{
-    const r = await fetch(JSON_URL);
-    jsonData = await r.json();
-    // console.log("loaded JSON", jsonData);
-  }catch(e){
-    console.warn("can't load data.json:", e);
-    jsonData = null;
-  }
+    const res=await fetch('https://raw.githubusercontent.com/mahdiklidari190/AI-PRO/main/data.json');
+    jsonData=await res.json();
+  }catch(e){console.error("خطا در بارگذاری JSON:",e);jsonData=null;}
 }
 loadJSON();
 
-/* =================== کمک‌کننده‌ها =================== */
 function detectLanguage(text){
-  const persian = /[\u0600-\u06FF]/;
-  const arabic = /[\u0750-\u077F\u08A0-\u08FF]/;
-  const cjk = /[\u4e00-\u9fff]/;
+  const persian=/[\u0600-\u06FF]/;
+  const arabic=/[\u0750-\u077F\u08A0-\u08FF]/;
   if(persian.test(text)) return 'fa';
   if(arabic.test(text)) return 'ar';
-  if(cjk.test(text)) return 'zh';
-  // very simple heuristics; fallback en
   return 'en';
 }
 
-function nowTimeStr(){
-  return new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+function callCreator(){window.location.href="tel:09211243320";}
+function toggleChat(){chatContainer.style.display==='flex'?closeChat():openChat();}
+function openChat(){
+  chatContainer.style.display='flex';
+  chatContainer.classList.add('show');
+  chatToggleBtn.classList.add('active');
+  if(window.innerWidth<=768){chatToggleBtn.style.visibility='hidden';chatToggleBtn.style.opacity='0';}
+}
+function closeChat(){
+  chatContainer.classList.remove('show');
+  setTimeout(()=>{chatContainer.style.display='none';},400);
+  chatToggleBtn.classList.remove('active');
+  if(window.innerWidth<=768){chatToggleBtn.style.visibility='visible';chatToggleBtn.style.opacity='1';}
 }
 
-/* =================== رفتار بازاریابی (اگر مورد مرتبط پیدا شد) =================== */
-function marketingResponseForProduct(product, lang){
-  // محصول فرضی: { title, url, price, summary, features: [] }
-  // قالب‌سازی پاسخ متقاعدکننده به زبان کاربر
-  const title = product.title || product.name || "محصول";
-  const summary = product.summary || "";
-  const url = product.url || product.link || "";
-  const features = (product.features && Array.isArray(product.features))? product.features.slice(0,3) : [];
-
-  const ctaEn = `You can get it here: ${url}`;
-  const ctaFa = `برای خرید / اطلاعات بیشتر: ${url}`;
-  const ctaAr = `للحصول على المنتج: ${url}`;
-
-  let base = "";
-  if(lang==='fa'){
-    base += `محصول پیشنهادی: ${title}\n${summary}\n`;
-    if(features.length) base += `ویژگی‌های اصلی: ${features.join(' · ')}\n`;
-    base += `قیمت (در صورت وجود): ${product.price ? product.price : 'تماس بگیرید'}\n`;
-    base += `${ctaFa}\n`;
-    base += `نکته: اگر می‌خواهید راهنمایی خرید یا مقایسه با محصولات دیگر را بفرستید.`;
-  } else if(lang==='ar'){
-    base += `المنتج المقترح: ${title}\n${summary}\n`;
-    if(features.length) base += `الميزات الرئيسية: ${features.join(' · ')}\n`;
-    base += `${ctaAr}\n`;
-  } else {
-    base += `Recommended product: ${title}\n${summary}\n`;
-    if(features.length) base += `Key features: ${features.join(' · ')}\n`;
-    base += `${product.price ? `Price: ${product.price}\n` : ''}${ctaEn}\n`;
-    base += `Tip: ask for comparison or installation options.`;
-  }
-  return base;
+function renderMessages(){
+  chatBox.innerHTML='';
+  messages.forEach(msg=>{
+    const div=document.createElement("div");
+    div.className="message "+(msg.role==="user"?"user":"assistant");
+    div.innerHTML=`${msg.content}<span class="msg-time">${msg.time||""}</span>`;
+    chatBox.appendChild(div);
+  });
+  chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-/* اگر صفحه یا محصول مرتبط پیدا شد، جواب بازاریابی می‌سازیم */
-function searchJSONAndBuildMarketing(query, lang){
+function searchJSON(query, lang){
   if(!jsonData) return null;
-  const q = query.toLowerCase();
-
-  // اول سیر منطقی: شرکت، صفحات، محصولات
-  if(jsonData.company && jsonData.company.name && jsonData.company.name.toLowerCase().includes(q)){
-    let txt = `نام شرکت: ${jsonData.company.name}\n`;
-    if(jsonData.company.phones) txt += `تلفن‌ها: ${jsonData.company.phones.join(', ')}\n`;
-    if(jsonData.company.addresses?.office) txt += `آدرس: ${jsonData.company.addresses.office}\n`;
-    txt += `برای اطلاعات بیشتر از محصولات ما سوال بپرسید یا بگویید دنبال چه محصولی هستید.`;
-    return (lang==='fa')? txt : (lang==='ar'? txt : txt);
+  query=query.toLowerCase();
+  if(jsonData.company.name.toLowerCase().includes(query)){
+    let text=`نام شرکت: ${jsonData.company.name}\nتلفن‌ها: ${jsonData.company.phones.join(', ')}\nآدرس دفتر: ${jsonData.company.addresses.office}\nساعت کاری: ${jsonData.company.working_hours}`;
+    if(lang!=='fa') text=translateToEnglish(text);
+    return text;
   }
-
-  // جستجوی صفحات
-  if(Array.isArray(jsonData.pages)){
-    for(const page of jsonData.pages){
-      const title = (page.title||"").toLowerCase();
-      const summary = (page.summary||"").toLowerCase();
-      if(title.includes(q) || summary.includes(q)){
-        let txt = `${page.title}\n${page.summary||''}\n`;
-        if(page.items) txt += 'موارد: '+ page.items.map(i=>i.title).slice(0,5).join(' · ') + '\n';
-        return (lang==='fa')? txt : txt;
-      }
-      // محصولات در صفحه
-      if(page.products){
-        const found = page.products.find(p => (p.title||'').toLowerCase().includes(q) || (p.summary||'').toLowerCase().includes(q));
-        if(found) return marketingResponseForProduct(found, lang);
+  for(const page of jsonData.pages){
+    if(page.title.toLowerCase().includes(query)||(page.summary&&page.summary.toLowerCase().includes(query))){
+      let text=`${page.title}\n${page.summary||''}`;
+      if(page.items) text+='\nموارد: '+page.items.map(i=>i.title).join(', ');
+      if(lang!=='fa') text=translateToEnglish(text);
+      return text;
+    }
+    if(page.products){
+      const found=page.products.find(p=>p.title.toLowerCase().includes(query));
+      if(found){
+        let text=`محصول: ${found.title}\nلینک: ${found.url}`;
+        if(lang!=='fa') text=translateToEnglish(text);
+        return text;
       }
     }
   }
-
-  // جستجوی محصولات در ریشه
-  if(Array.isArray(jsonData.products)){
-    const found = jsonData.products.find(p=> (p.title||'').toLowerCase().includes(q) || (p.summary||'').toLowerCase().includes(q));
-    if(found) return marketingResponseForProduct(found, lang);
-  }
-
   return null;
 }
 
-/* =================== محدودیت موضوعی (همان که خواستی) =================== */
-const restrictedPatterns = [
-  /(^|\s)(کد|برنامه|پایتون|python|java|javascript|run|script)(\s|$)/i,
-  /محاسبات|واحد|ریاضی|math/i,
-  /دیباگ|debug|api|دیتابیس|database/i,
-  /جوک|داستان|شعر|عاشقانه|حوصله|talk/i,
-  /روانشناسی|پزشکی|حقوق|تحصیلی|مشاوره/i,
-  /فال|پیش‌بینی|پیشگویی|fortune/i,
-  /فلسفه|دین/i,
-  /دوست|علاقه|relationship|love/i,
-  /سیاست|ورزش|فیلم|موسیقی|افراد مشهور|celebrity/i,
-  /ترجمه|article|content/i,
-  /خشونت|هک|نفوذ|hack|exploit/i,
-  /محرمانه|confidential|personal/i,
-  /لینک مشکوک|تبلیغ/i
+function translateToEnglish(text){
+  const mapping={"نام شرکت":"Company Name","تلفن‌ها":"Phones","آدرس دفتر":"Office Address","ساعت کاری":"Working Hours","موارد":"Items","محصول":"Product"};
+  for(const key in mapping) text=text.replaceAll(key,mapping[key]);
+  return text;
+}
+
+const restrictedPatterns=[
+  /(کد|برنامه|تبدیل|محاسبه|run|code)/i,
+  /(جوک|داستان|شعر|عاشقانه|حوصله|روانشناسی|پزشکی|حقوقی|تحصیلی)/i,
+  /(فال|پیش‌بینی|فلسفی|دینی)/i,
+  /(دوست داشتن|عاشق|رابطه|زندگی شخصی)/i,
+  /(سیاست|ورزش|فیلم|موسیقی|افراد مشهور)/i,
+  /(هک|نفوذ|محرمانه|لینک مشکوک)/i
 ];
 
-function isRestricted(text){
-  return restrictedPatterns.some(p => p.test(text));
-}
+function checkRestrictedContent(text){return restrictedPatterns.some(p=>p.test(text));}
 
-function getRestrictionReply(lang){
-  const map = {
-    fa: "متاسفم، من فقط دربارهٔ شرکت، محصولات و خدمات آن پاسخ می‌دهم. لطفاً سوالتان را در همین حوزه مطرح کنید.",
-    en: "Sorry — I only answer about the company, its products and services. Please ask within that domain.",
-    ar: "عذراً — أجيب فقط عن أسئلة حول الشركة ومنتجاتها وخدماتها. يرجى طرح الأسئلة ضمن هذا النطاق.",
-    zh: "抱歉——我只回答有关公司、产品和服务的问题。请在此范围内提问。",
-  };
-  return map[lang]||map['en'];
-}
-
-/* =================== شمارندهٔ پیام (soft rate limiting) =================== */
-/* ما یک لاگ در sessionStorage نگه می‌داریم (جلسه فعلی)؛ این اجازه می‌دهد کاربر در یک سشن منطقی چت کند اما اگر ارسال‌ها سریع شد هشدار/وقفه بدهیم */
-function logMessageTimestamp(){
-  const key = 'bk_msg_log';
-  const raw = sessionStorage.getItem(key);
-  let arr = raw? JSON.parse(raw) : [];
-  const now = Date.now();
-  arr.push(now);
-  // پاکسازی قدیمی‌ها خارج از پنجره
-  arr = arr.filter(t => now - t <= SOFT_WINDOW_MS);
-  sessionStorage.setItem(key, JSON.stringify(arr));
-  return arr.length;
-}
-
-function oversizedBehavior(count){
-  // اگر در پنجره خیلی زیاد شد: اخطار اول، بعد بلوک کوتاه در صورت تکرار
-  if(count >= ABUSE_LIMIT){
-    // ذخیره بلوک کوتاه به صورت sessionStorage
-    const blockUntil = Date.now() + SHORT_BLOCK_MS;
-    sessionStorage.setItem('bk_short_block', String(blockUntil));
-    return {blocked:true, reason:'short_block'};
-  }
-  if(count >= SOFT_LIMIT){
-    // soft limit => کمی خنک شو: به کاربر می‌گوییم تعداد پیام‌ها زیاد است و حالا 10 دقیقه ارسال را محدود کن
-    return {warn:true, reason:'soft_limit'};
-  }
-  if(count >= WARN_THRESHOLD){
-    return {warn:true, reason:'warn_threshold'};
-  }
-  return {};
-}
-
-function checkShortBlock(){
-  const v = sessionStorage.getItem('bk_short_block');
-  if(!v) return false;
-  if(Date.now() > Number(v)){ sessionStorage.removeItem('bk_short_block'); return false; }
-  return true;
-}
-
-/* =================== سیستم بلاک برای سوالات خارج از حوزه (persisted) =================== */
-function getRestrictData(){
-  return JSON.parse(localStorage.getItem('bk_restrict')||'{}');
-}
-function setRestrictData(obj){ localStorage.setItem('bk_restrict', JSON.stringify(obj)); }
-
-/* recordRestriction: بر اساس RESTRICT_LIMIT هشدار/بلاک بلندمدت اعمال می‌کند */
-function recordRestrictionViolation(lang){
-  const d = getRestrictData();
-  d.count = (d.count||0) + 1;
-  if(d.count >= RESTRICT_LIMIT){
-    const until = Date.now() + BLOCK_HOURS_FOR_RESTRICT * 3600 * 1000;
-    d.blockUntil = until;
-    d.count = 0; // ریست پس از بلاک
-  }
-  setRestrictData(d);
-  return d;
-}
-
-function checkRestrictBlock(){
-  const d = getRestrictData();
-  if(d.blockUntil && Date.now() < d.blockUntil) return true;
+function checkBlockStatus(){
+  const blockData=JSON.parse(localStorage.getItem('blockData')||'{}');
+  if(blockData.expire && new Date(blockData.expire)>new Date()) return true;
+  localStorage.removeItem('blockData');
   return false;
 }
 
-/* =================== UI: توابع کمکی =================== */
-function pushMessage(role, content){
-  messages.push({role, content, time: nowTimeStr()});
-  renderMessages();
+function recordRestriction(lang){
+  let count=parseInt(localStorage.getItem('restrictionCount')||'0')+1;
+  localStorage.setItem('restrictionCount',count);
+  if(count>=RESTRICT_LIMIT){
+    const expireDate=new Date();
+    expireDate.setHours(expireDate.getHours()+BLOCK_HOURS);
+    localStorage.setItem('blockData',JSON.stringify({expire:expireDate}));
+    localStorage.setItem('restrictionCount',0);
+  }
+  return count;
 }
-function renderMessages(){
-  chatBox.innerHTML = '';
-  messages.forEach(m => {
-    const div = document.createElement('div');
-    div.className = 'message ' + (m.role === 'user' ? 'user' : 'assistant');
-    div.innerHTML = `<div>${escapeHtml(m.content).replace(/\n/g,'<br/>')}</div><div class="msg-time">${m.time||''}</div>`;
-    chatBox.appendChild(div);
-  });
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-/* =================== رویدادهای کلیدی =================== */
-userInput.addEventListener('keydown', e=>{
-  if(e.key === 'Enter'){ e.preventDefault(); if(!isTyping) sendMessage(); }
+function getWarningMessage(lang,count){
+  const messages={
+    fa:`⚠️ هشدار: شما ${count} بار سوال خارج از حوزه پرسیده‌اید. ادامه دادن باعث مسدود شدن حساب شما به مدت ${BLOCK_HOURS} ساعت می‌شود.`,
+    en:`⚠️ Warning: You have asked ${count} out-of-scope questions. Continuing will block your account for ${BLOCK_HOURS} hours.`,
+    ar:`⚠️ تحذير: لقد طرحت ${count} أسئلة خارج النطاق. الاستمرار سيؤدي إلى حظر حسابك لمدة ${BLOCK_HOURS} ساعة.`
+  };
+  return messages[lang]||messages['en'];
+}
+
+function getRestrictionMessage(lang){
+  const messages={
+    fa:'متاسفم، من فقط در زمینه معرفی شرکت، محصولات و خدمات آن پاسخگو هستم.\nلطفاً سوالات خود را در این حوزه مطرح کنید.',
+    en:'Sorry, I only respond regarding company introduction, products, and services.\nPlease ask questions in this domain.',
+    ar:'عذراً، أنا أجيب فقط حول الشركة، منتجاتها وخدماتها.\nيرجى طرح الأسئلة في هذا المجال.'
+  };
+  return messages[lang]||messages['en'];
+}
+
+userInput.addEventListener("keydown",function(e){
+  if(e.key==="Enter"){ e.preventDefault(); if(!isTyping) sendMessage(); }
 });
 
-/* نمایش هشدار بلاک بلند مدت (اگر فعال) */
-(function initBlockState(){
-  const restrictData = getRestrictData();
-  if(restrictData.blockUntil && Date.now() < restrictData.blockUntil){
-    const lang = 'fa';
-    pushMessage('assistant', getRestrictionReply(lang) + '\n⛔ شما تا ' + Math.ceil((restrictData.blockUntil - Date.now())/(3600*1000)) + ' ساعت محدود شده‌اید.');
-    userInput.disabled = true;
-    sendBtn.disabled = true;
-  }
-})();
-
-/* =================== تابع اصلی ارسال پیام =================== */
 async function sendMessage(){
   if(isTyping) return;
-  // بررسی بلوک کوتاه session
-  if(checkShortBlock()){
-    pushMessage('assistant', 'سیستم: حجم درخواست‌ها خیلی بالاست. چند دقیقه صبر کنید و دوباره تلاش کنید.');
-    return;
-  }
-  // بررسی بلاک بلندمدت برای سوالات خارج از حوزه
-  if(checkRestrictBlock()){
-    const d = getRestrictData();
-    // زبان را از کاربر نگیرید؛ چون کاربر ممکن است فارسی یا هر زبان باشد. برای نمایش اولیه از detectLanguage استفاده می‌کنیم.
-    const currentLang = detectLanguage(userInput.value || '');
-    pushMessage('assistant', getRestrictionReply(currentLang) + '\n⛔ شما تا ' + Math.ceil((d.blockUntil - Date.now())/(3600*1000)) + ' ساعت محدود شده‌اید.');
-    userInput.value = '';
+  const content=userInput.value.trim();
+  if(!content) return;
+  const lang=detectLanguage(content);
+
+  if(checkBlockStatus()){
+    const msg=getRestrictionMessage(lang)+'\n⛔ شما به مدت '+BLOCK_HOURS+' ساعت مسدود شده‌اید.';
+    messages.push({role:"assistant",content:msg,time:new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})});
+    renderMessages();
+    userInput.value="";
     return;
   }
 
-  const text = userInput.value.trim();
-  if(!text) return;
-  const lang = detectLanguage(text);
-
-  // قبل از ارسال: مدیریت نرخ
-  const count = logMessageTimestamp();
-  const behavior = oversizedBehavior(count);
-  if(behavior.blocked){
-    pushMessage('assistant', (lang==='fa'?'ترافیک خیلی بالاست — دسترسی موقتی محدود شد.':'High traffic — temporary block applied.'));
-    userInput.value = '';
-    return;
-  }
-  if(behavior.warn){
-    pushMessage('assistant', (lang==='fa'?'هشدار: سرعت پیام‌ها بالاست — لطفاً کندتر بنویسید.':'Warning: message rate high — please slow down.'));
-    // اما اجازه می‌دهیم پیام فعلی ارسال شود (soft)
-  }
-
-  // حالا بررسی محدودیت موضوعی (اگر خارج از حوزه است، جواب محدودی بده یا اخطار)
-  if(isRestricted(text)){
-    // ثبت تخلف و تصمیم‌گیری
-    const d = recordRestrictionViolation(lang);
-    const times = (d.count || 0);
-    if(d.blockUntil && Date.now() < d.blockUntil){
-      pushMessage('assistant', getRestrictionReply(lang) + '\n⛔ ' + (lang==='fa'?`حساب شما تا ${BLOCK_HOURS_FOR_RESTRICT} ساعت مسدود شد.`:`Your account has been blocked for ${BLOCK_HOURS_FOR_RESTRICT} hours.`));
-      userInput.value = '';
-      userInput.disabled = true;
-      sendBtn.disabled = true;
-      return;
-    } else {
-      // اگر به حد اخطار نرسیده یا هنوز بن نشده، اخطار منتشر کن (تعداد دفعات)
-      const warnCount = d.count || 0;
-      pushMessage('assistant', getRestrictionReply(lang) + '\n' + (lang==='fa'? `⚠️ هشدار (${warnCount}/${RESTRICT_LIMIT}) — ادامه دادن موجب مسدودی ${BLOCK_HOURS_FOR_RESTRICT} ساعته می‌شود.` : `⚠️ Warning (${warnCount}/${RESTRICT_LIMIT}) — continuing will block you for ${BLOCK_HOURS_FOR_RESTRICT} hours.`));
-      userInput.value = '';
-      return;
-    }
-  }
-
-  // پیام کاربر را ثبت کن و نمایش ده
-  pushMessage('user', text);
-  userInput.value = '';
-
-  // اگر JSON اطلاعات مرتبط دارد، از آن استفاده کن و تبلیغ کن
-  const marketing = searchJSONAndBuildMarketing(text, lang);
-  if(marketing){
-    // بازاریابی: اول خلاصه‌ای ارائه بده و یک CTA مشخص
-    await simulateTyping(marketing);
+  if(checkRestrictedContent(content)){
+    const count=recordRestriction(lang);
+    const warningMsg=getWarningMessage(lang,count);
+    const msg=getRestrictionMessage(lang)+'\n'+warningMsg;
+    messages.push({role:"assistant",content:msg,time:new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})});
+    renderMessages();
+    userInput.value="";
     return;
   }
 
-  // در غیر این صورت، اجازه بده مدل پاسخ بده (ولی محدودیت مکالمه: max_tokens و max_history)
-  isTyping = true;
-  typingIndicator.style.display = 'block';
-  sendBtn.disabled = true;
-  sendBtn.textContent = (lang==='fa'?'توقف':'Stop');
+  messages.push({role:"user",content,time:new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})});
+  renderMessages();
+  userInput.value="";
+  typingIndicator.style.display='block';
+  stopTyping=false;
+  isTyping=true;
+
+  const jsonReply=searchJSON(content,lang);
+  if(jsonReply){ await simulateTyping(jsonReply); return; }
 
   try{
-    // ساخت پیام‌های ارسالی به API: ما فقط آخرین N پیام را می‌فرستیم تا هزینه کنترل شود
-    const historyLimit = 8;
-    const chatMessages = messages.slice(-historyLimit).map(m=> ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }) );
-    // اضافه کردن پیام تازه
-    chatMessages.push({ role: 'user', content: text });
-
-    const resp = await fetch("https://api.gapgpt.app/v1/chat/completions", {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json', 'Authorization': `Bearer ${GAP_TOKEN}` },
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: chatMessages,
-        max_tokens: 300
-      })
+    const apiResponse=await fetch("https://api.gapgpt.app/v1/chat/completions",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${GAP_TOKEN}`},
+      body:JSON.stringify({model:"gpt-4o",messages:messages.map(({role,content})=>({role,content})),max_tokens:400})
     });
-    const json = await resp.json();
-    const reply = json?.choices?.[0]?.message?.content || (lang==='fa'?'پاسخ دریافت نشد.':'No response.');
+    const data=await apiResponse.json();
+    let reply=data.choices?.[0]?.message?.content||(lang==='fa'?'پاسخ نامشخص دریافت شد.':'Unknown response received.');
     await simulateTyping(reply);
-  }catch(e){
-    await simulateTyping(lang==='fa'?'خطا در ارتباط با سرور یا توکن.':'Server/token error.');
-  }finally{
-    isTyping = false;
-    typingIndicator.style.display = 'none';
-    sendBtn.disabled = false;
-    sendBtn.textContent = (lang==='fa'?'ارسال':'Send');
+  }catch(err){
+    await simulateTyping(lang==='fa'?'خطا در اتصال یا اعتبار توکن.':'Token error or connection failed.');
   }
 }
 
-/* =================== شبیه‌سازی تایپ (ظاهر انسانی) =================== */
-function simulateTyping(text){
+async function simulateTyping(text){
+  messages.push({role:"assistant",content:"",time:new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})});
+  renderMessages();
+  let i=0;
   return new Promise(resolve=>{
-    messages.push({role:'assistant', content:'', time: nowTimeStr()});
-    renderMessages();
-    let i = 0;
-    typingIndicator.style.display = 'block';
-    typingInterval = setInterval(()=>{
-      if(stopTyping || i >= text.length){
+    typingInterval=setInterval(()=>{
+      if(stopTyping||i>=text.length){
         clearInterval(typingInterval);
-        typingIndicator.style.display = 'none';
-        stopTyping = false;
+        typingIndicator.style.display='none';
+        isTyping=false;
         renderMessages();
         resolve();
         return;
       }
-      messages[messages.length-1].content += text[i++];
+      messages[messages.length-1].content+=text[i];
       renderMessages();
-    }, 22 + Math.floor(Math.random()*30)); // سرعت نوشتن اندکی تصادفی
+      i++;
+    },30);
   });
 }
-
-/* =================== UI: باز و بسته کردن پنجره =================== */
-function toggleChat(){ if(chatContainer.style.display==='flex'){ closeChat(); } else openChat(); }
-function openChat(){ chatContainer.style.display='flex'; chatToggleBtn.style.display='none'; chatContainer.setAttribute('aria-hidden','false'); }
-function closeChat(){ chatContainer.style.display='none'; chatToggleBtn.style.display='flex'; chatContainer.setAttribute('aria-hidden','true'); }
-function callCreator(){ window.location.href = 'tel:09211243320'; }
-
-/* =================== helpers debug / reset (برای توسعه‌) =================== */
-window._bk_reset_restrict = ()=>{ localStorage.removeItem('bk_restrict'); sessionStorage.removeItem('bk_short_block'); sessionStorage.removeItem('bk_msg_log'); alert('reset done'); };
-
-/* =================== پایان =================== */
 </script>
 </body>
 </html>
