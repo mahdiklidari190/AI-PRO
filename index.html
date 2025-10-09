@@ -39,6 +39,7 @@
     input[type="text"]{flex:1;padding:0.6rem;font-size:1rem;border-radius:8px;border:1px solid #ccc;}
     button.send-btn{background:#3b82f6;color:white;border:none;border-radius:8px;padding:0.6rem 1rem;font-size:1rem;cursor:pointer;transition:all 0.2s ease;}
     button.send-btn:hover{background:#2563eb;}
+    button.send-btn:disabled{background:#a5b4fc;cursor:not-allowed;}
     .typing{font-style:italic;color:#6b7280;padding:0.5rem 1rem;display:none;}
   </style>
 </head>
@@ -64,14 +65,15 @@
   <div class="typing" id="typingIndicator">در حال نوشتن...</div>
   <div class="input-area">
     <input type="text" id="userInput" placeholder="...پیام خود را بنویسید"/>
-    <button class="send-btn" onclick="sendMessage()">ارسال</button>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">ارسال</button>
   </div>
 </div>
+
 <script>
 const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
 const typingIndicator = document.getElementById('typingIndicator');
-const sendBtn = document.querySelector('.send-btn');
+const sendBtn = document.getElementById('sendBtn');
 const chatContainer = document.getElementById('chatContainer');
 const chatToggleBtn = document.getElementById('chatToggleBtn');
 
@@ -80,6 +82,7 @@ let typingInterval = null;
 let stopTyping = false;
 let jsonData = null;
 const GAP_TOKEN = "sk-T15TGdP9wukEdUzMiP6dJRIYI0oQ1mbx0jdtS7SDAmuZor4G";
+let isTyping = false; // ⚡ فلگ جلوگیری از ارسال همزمان
 
 async function loadJSON() {
   try {
@@ -182,24 +185,31 @@ function translateToEnglish(text) {
   return text;
 }
 
+// جلوگیری از ارسال همزمان
 userInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     e.preventDefault();
-    sendMessage();
+    if (!isTyping) sendMessage();
   }
 });
 
 async function sendMessage() {
+  if (isTyping) return; // 🔒 فلگ
   const content = userInput.value.trim();
   if (!content) return;
+
   const timeStr = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
   messages.push({ role: "user", content, time: timeStr });
   renderMessages();
   userInput.value = "";
+
   typingIndicator.style.display = 'block';
   sendBtn.textContent = 'توقف';
+  sendBtn.disabled = false;
   sendBtn.onclick = () => { stopTyping = true; };
   stopTyping = false;
+  isTyping = true;
+  sendBtn.disabled = true; // 🔒 دکمه ارسال غیرفعال
 
   const lang = detectLanguage(content);
   const jsonReply = searchJSON(content, lang);
@@ -223,20 +233,22 @@ async function sendMessage() {
     });
 
     const data = await apiResponse.json();
+    let reply = '';
+
     if (data.choices?.[0]?.message) {
-      let reply = data.choices[0].message.content;
+      reply = data.choices[0].message.content;
       if (/(کد|برنامه|تبدیل|محاسبه|run|code)/i.test(content)) {
         reply = lang === 'fa' ? 'متاسفم، من محدود هستم و نمی‌توانم این کار را انجام دهم.' : 'Sorry, I am limited and cannot do that.';
       }
-      await simulateTyping(reply);
     } else if (data.error) {
-      let errorText = `❌ خطا از GAP API\nکد وضعیت: ${apiResponse.status}\nپیام: ${data.error.message}`;
-      if (data.error.code) errorText += `\nکد خطا: ${data.error.code}`;
-      if (data.error.request_id) errorText += `\nشناسه درخواست: ${data.error.request_id}`;
-      await simulateTyping(errorText);
+      reply = `❌ خطا از GAP API\nکد وضعیت: ${apiResponse.status}\nپیام: ${data.error.message}`;
+      if (data.error.code) reply += `\nکد خطا: ${data.error.code}`;
+      if (data.error.request_id) reply += `\nشناسه درخواست: ${data.error.request_id}`;
     } else {
-      await simulateTyping(lang === 'fa' ? 'پاسخ نامشخص دریافت شد.' : 'Unknown response received.');
+      reply = lang === 'fa' ? 'پاسخ نامشخص دریافت شد.' : 'Unknown response received.';
     }
+
+    await simulateTyping(reply);
   } catch (err) {
     await simulateTyping(lang === 'fa' ? 'خطا در اتصال یا اعتبار توکن.' : 'Token error or connection failed.');
   }
@@ -250,13 +262,16 @@ async function simulateTyping(text) {
   });
   renderMessages();
   let i = 0;
+
   return new Promise(resolve => {
     typingInterval = setInterval(() => {
       if (stopTyping || i >= text.length) {
         clearInterval(typingInterval);
         typingIndicator.style.display = 'none';
         sendBtn.textContent = 'ارسال';
+        sendBtn.disabled = false;
         sendBtn.onclick = sendMessage;
+        isTyping = false; // پایان تایپ
         renderMessages();
         resolve();
         return;
