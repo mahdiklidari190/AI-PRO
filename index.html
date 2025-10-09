@@ -77,14 +77,17 @@ const chatToggleBtn = document.getElementById('chatToggleBtn');
 let messages = [];
 let typingInterval = null;
 let stopTyping = false;
-let jsonData = null;
+let jsonData = {pages:[]}; // شی خالی برای جلوگیری از مشکل
 
 // Load JSON data
 async function loadJSON() {
   try {
     const res = await fetch('https://raw.githubusercontent.com/mahdiklidari190/AI-PRO/main/data.json');
     jsonData = await res.json();
-  } catch(e) { console.error("خطا در بارگذاری JSON:", e); jsonData=null; }
+  } catch(e) { 
+    console.error("خطا در بارگذاری JSON:", e); 
+    jsonData = {pages:[]}; // حتماً یک شی خالی بذار
+  }
 }
 loadJSON();
 
@@ -125,11 +128,9 @@ function renderMessages() {
   chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-const stopMessage=()=>{stopTyping=true;};
 function callCreator(){window.location.href="tel:09211243320";}
 userInput.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();sendMessage();}});
 
-// Dummy translation function for English output (simplified)
 function translateToEnglish(text){
   const mapping = {
     "نام شرکت": "Company Name",
@@ -143,7 +144,6 @@ function translateToEnglish(text){
   return text;
 }
 
-// Simulate typing
 async function simulateTyping(text){
   messages.push({role:"assistant",content:"",time:new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})});
   renderMessages();
@@ -182,7 +182,7 @@ async function sendMessage(){
   const lang = detectLanguage(content);
 
   // === بررسی محصولات JSON قبل از چت آزاد ===
-  if (jsonData) {
+  if (jsonData && Array.isArray(jsonData.pages)) {
     let productMatch = null;
     for (const page of jsonData.pages) {
       if (page.products) {
@@ -193,7 +193,7 @@ async function sendMessage(){
     if (productMatch) {
       const reply = `اگر دنبال ${productMatch.title} هستید، می‌توانید این محصول را از شرکت ما تهیه کنید:\nلینک خرید: ${productMatch.url}`;
       await simulateTyping(reply);
-      return; // جلوگیری از ارسال پیام به GPT
+      return; 
     }
   }
 
@@ -215,6 +215,7 @@ async function sendMessage(){
     let reply = data.choices[0].message.content;
     await simulateTyping(reply);
   }catch(err){
+    console.error(err);
     await simulateTyping(lang==='fa'?'مشکلی پیش آمد، پاسخ دریافت نشد.':'An error occurred, no response received.');
   }
 }
