@@ -77,21 +77,17 @@ const chatToggleBtn = document.getElementById('chatToggleBtn');
 let messages = [];
 let typingInterval = null;
 let stopTyping = false;
-let jsonData = {pages:[]}; // شی خالی برای جلوگیری از مشکل
+let jsonData = {pages:[]}; // مقدار اولیه خالی
 
-// Load JSON data
+// بارگذاری JSON
 async function loadJSON() {
   try {
     const res = await fetch('https://raw.githubusercontent.com/mahdiklidari190/AI-PRO/main/data.json');
     jsonData = await res.json();
-  } catch(e) { 
-    console.error("خطا در بارگذاری JSON:", e); 
-    jsonData = {pages:[]}; // حتماً یک شی خالی بذار
-  }
+  } catch(e) { console.error("خطا در بارگذاری JSON:", e); jsonData={pages:[]}; }
 }
 loadJSON();
 
-// Detect language
 function detectLanguage(text){
   const persian = /[\u0600-\u06FF]/;
   const arabic = /[\u0750-\u077F\u08A0-\u08FF]/;
@@ -101,23 +97,11 @@ function detectLanguage(text){
 }
 
 function isMobile() { return window.innerWidth <= 768; }
+function toggleChat() { chatContainer.style.display==='flex'?closeChat():openChat(); }
+function openChat() { chatContainer.style.display='flex'; chatToggleBtn.classList.add('active'); if(isMobile()){chatToggleBtn.style.visibility='hidden';chatToggleBtn.style.opacity='0';} }
+function closeChat() { chatContainer.style.display='none'; chatToggleBtn.classList.remove('active'); if(isMobile()){chatToggleBtn.style.visibility='visible';chatToggleBtn.style.opacity='1';} }
 
-function toggleChat() {
-  if(chatContainer.style.display==='flex') closeChat();
-  else openChat();
-}
-function openChat() {
-  chatContainer.style.display='flex';
-  chatToggleBtn.classList.add('active');
-  if(isMobile()){chatToggleBtn.style.visibility='hidden';chatToggleBtn.style.opacity='0';}
-}
-function closeChat() {
-  chatContainer.style.display='none';
-  chatToggleBtn.classList.remove('active');
-  if(isMobile()){chatToggleBtn.style.visibility='visible';chatToggleBtn.style.opacity='1';}
-}
-
-function renderMessages() {
+function renderMessages(){
   chatBox.innerHTML='';
   messages.forEach(msg=>{
     const div=document.createElement("div");
@@ -130,19 +114,6 @@ function renderMessages() {
 
 function callCreator(){window.location.href="tel:09211243320";}
 userInput.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();sendMessage();}});
-
-function translateToEnglish(text){
-  const mapping = {
-    "نام شرکت": "Company Name",
-    "تلفن‌ها": "Phones",
-    "آدرس دفتر": "Office Address",
-    "ساعت کاری": "Working Hours",
-    "موارد": "Items",
-    "محصول": "Product"
-  };
-  for(const key in mapping) text = text.replaceAll(key, mapping[key]);
-  return text;
-}
 
 async function simulateTyping(text){
   messages.push({role:"assistant",content:"",time:new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})});
@@ -165,7 +136,22 @@ async function simulateTyping(text){
   });
 }
 
-// Send message
+// تابع بررسی کلیدواژه محصولات برای تبلیغ
+function checkProductKeywords(query){
+  query = query.toLowerCase();
+  for(const page of jsonData.pages){
+    if(page.products){
+      for(const prod of page.products){
+        if(query.includes(prod.title.toLowerCase())){ 
+          return `شما دنبال "${prod.title}" هستید؟ می‌توانید آن را از شرکت ما تهیه کنید:\n${prod.url}`; 
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// ارسال پیام
 async function sendMessage(){
   const content = userInput.value.trim();
   if(!content) return;
@@ -173,31 +159,16 @@ async function sendMessage(){
   messages.push({role:"user",content,time:timeStr});
   renderMessages();
   userInput.value="";
-
   typingIndicator.style.display='block';
   sendBtn.textContent='توقف';
   sendBtn.onclick=()=>{stopTyping=true;};
   stopTyping=false;
 
-  const lang = detectLanguage(content);
+  // بررسی محصولات
+  const productReply = checkProductKeywords(content);
+  if(productReply){ await simulateTyping(productReply); return; }
 
-  // === بررسی محصولات JSON قبل از چت آزاد ===
-  if (jsonData && Array.isArray(jsonData.pages)) {
-    let productMatch = null;
-    for (const page of jsonData.pages) {
-      if (page.products) {
-        productMatch = page.products.find(p => content.toLowerCase().includes(p.title.toLowerCase()));
-        if (productMatch) break;
-      }
-    }
-    if (productMatch) {
-      const reply = `اگر دنبال ${productMatch.title} هستید، می‌توانید این محصول را از شرکت ما تهیه کنید:\nلینک خرید: ${productMatch.url}`;
-      await simulateTyping(reply);
-      return; 
-    }
-  }
-
-  // === ادامه چت آزاد با GPT ===
+  // ادامه چت آزاد
   try{
     const apiResponse = await fetch("https://api.gapgpt.app/v1/chat/completions",{
       method:"POST",
@@ -216,7 +187,7 @@ async function sendMessage(){
     await simulateTyping(reply);
   }catch(err){
     console.error(err);
-    await simulateTyping(lang==='fa'?'مشکلی پیش آمد، پاسخ دریافت نشد.':'An error occurred, no response received.');
+    await simulateTyping('مشکلی پیش آمد، پاسخ دریافت نشد.');
   }
 }
 </script>
