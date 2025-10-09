@@ -564,484 +564,179 @@ let messages = [];
 let typingInterval = null;
 let stopTyping = false;
 let jsonData = null;
-const GAP_TOKEN = "sk-T15TGdP9wukEdUzMiP6dJRIYI0oQ1mbx0jdtS7SDAmuZor4G";
 let isTyping = false;
 const RESTRICT_LIMIT = 3;
 const BLOCK_HOURS = 5;
 
-// بارگذاری داده‌های JSON از گیتهاب
+// بارگذاری JSON از مسیر لوکال
 async function loadJSON() {
-  try {
-    console.log("در حال بارگذاری داده‌های JSON از گیتهاب...");
-    const res = await fetch('https://raw.githubusercontent.com/mahdiklidari190/AI-PRO/main/data.json');
-    
-    if (!res.ok) {
-      throw new Error(`خطا در دریافت داده‌ها: ${res.status}`);
-    }
-    
-    jsonData = await res.json();
-    console.log("✅ داده‌های JSON با موفقیت بارگذاری شد:", jsonData);
-    
-    // نمایش پیام موفقیت
-    if (messages.length === 1) { // فقط اگر پیام خوش‌آمدگویی وجود دارد
-      const successMsg = { 
-        role: "assistant", 
-        content: "✅ داده‌های شرکت با موفقیت بارگذاری شد!\n\nاکنون می‌توانید در مورد:\n• محصولات و خدمات شرکت\n• دستگاه‌های جوش لیزری\n• اطلاعات تماس\n• مشخصات فنی\n\nسوال بپرسید.", 
-        time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) 
-      };
-      messages.push(successMsg);
-      renderMessages();
-    }
-    
-  } catch (e) {
-    console.error("❌ خطا در بارگذاری JSON:", e);
-    jsonData = null;
-    
-    // نمایش پیام خطا
-    const errorMsg = { 
-      role: "assistant", 
-      content: "⚠️ متاسفانه داده‌های شرکت در دسترس نیست. اما همچنان می‌توانم به سوالات شما پاسخ دهم.", 
-      time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) 
-    };
-    messages.push(errorMsg);
-    renderMessages();
-  }
-}
-
-// تشخیص زبان
-function detectLanguage(text) {
-  const persian = /[\u0600-\u06FF]/;
-  const arabic = /[\u0750-\u077F\u08A0-\u08FF]/;
-  if (persian.test(text)) return 'fa';
-  if (arabic.test(text)) return 'ar';
-  return 'en';
-}
-
-// تماس با سازنده
-function callCreator() { window.location.href = "tel:09211243320"; }
-
-// باز و بسته کردن چت
-function toggleChat() {
-  if (chatContainer.style.display === 'flex') {
-    closeChat();
-  } else {
-    openChat();
-  }
-}
-
-function openChat() {
-  chatContainer.style.display = 'flex';
-  chatContainer.classList.add('show');
-  chatToggleBtn.classList.add('active');
-
-  if (window.innerWidth <= 768) {
-    chatToggleBtn.classList.add('hide-on-mobile'); // مخفی روی موبایل
-  }
-
-  userInput.focus();
-}
-
-function closeChat() {
-  chatContainer.classList.remove('show');
-  setTimeout(() => { chatContainer.style.display = 'none'; }, 400);
-  chatToggleBtn.classList.remove('active');
-
-  if (window.innerWidth <= 768) {
-    chatToggleBtn.classList.remove('hide-on-mobile'); // دوباره نمایش
-  }
-}
-
-// تغییر تم - فقط برای پنجره چت
-function toggleTheme() {
-  const currentTheme = chatContainer.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  chatContainer.setAttribute('data-theme', newTheme);
-  localStorage.setItem('chat-theme', newTheme);
-}
-
-function initTheme() {
-  const savedTheme = localStorage.getItem('chat-theme') || 'light';
-  chatContainer.setAttribute('data-theme', savedTheme);
-}
-initTheme();
-
-// نمایش پیام‌ها
-function renderMessages() {
-  chatBox.innerHTML = '';
-  messages.forEach((msg, index) => {
-    const div = document.createElement("div");
-    div.className = `message ${msg.role === "user" ? "user" : "assistant"}`;
-    div.style.animationDelay = `${index * 0.1}s`;
-    
-    // حذف علائم مارک‌داون و بهبود نمایش
-    let cleanContent = msg.content.replace(/\\(.?)\\/g, '$1').replace(/\#\#(.?)\n/g, '$1\n');
-    cleanContent = cleanContent.replace(/\n/g, '<br>');
-    
-    div.innerHTML = `${cleanContent}<span class="msg-time">${msg.time || ""}</span>`;
-    chatBox.appendChild(div);
-  });
-  chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
-}
-
-// جستجوی هوشمند در JSON - بهبود یافته
-function searchJSON(query, lang = 'fa') {
-    if (!jsonData) {
-        console.log("❌ داده‌های JSON بارگذاری نشده‌اند");
-        return null;
-    }
-    
-    console.log("🔍 در حال جستجو در JSON برای:", query);
-    const lowerQuery = query.toLowerCase();
-
     try {
-        // جستجو در اطلاعات شرکت
-        if (jsonData.company) {
-            // جستجو در نام شرکت
-            if (jsonData.company.name && jsonData.company.name.fa && 
-                jsonData.company.name.fa.toLowerCase().includes(lowerQuery)) {
-                return `شرکت ${jsonData.company.name.fa}\n\n${jsonData.company.description?.fa || 'شرکت پیشرو در تولید دستگاه‌های جوش لیزری'}`;
-            }
-            
-            // جستجو در توضیحات شرکت
-            if (jsonData.company.description && jsonData.company.description.fa && 
-                jsonData.company.description.fa.toLowerCase().includes(lowerQuery)) {
-                return jsonData.company.description.fa;
-            }
-            
-            // جستجو در اطلاعات تماس
-            if ((jsonData.company.contact?.phone && jsonData.company.contact.phone.some(phone => phone.includes(query))) ||
-                lowerQuery.includes('تماس') || lowerQuery.includes('تلفن') || lowerQuery.includes('آدرس')) {
-                let contactInfo = `📞 اطلاعات تماس شرکت ${jsonData.company.name?.fa || 'نوین صنعت'}:\n\n`;
-                if (jsonData.company.contact?.phone) {
-                    contactInfo += `تلفن‌ها:\n`;
-                    jsonData.company.contact.phone.forEach(phone => {
-                        contactInfo += `• ${phone}\n`;
-                    });
-                }
-                if (jsonData.company.location?.address?.fa) {
-                    contactInfo += `\nآدرس:\n${jsonData.company.location.address.fa}`;
-                }
-                return contactInfo;
-            }
-        }
-
-        // جستجو در محصولات و خدمات
-        if (jsonData.products_services) {
-            // جستجو در محصولات اصلی
-            if (jsonData.products_services.mainproducts) {
-                for (const category of jsonData.products_services.mainproducts) {
-                    for (const item of category.items) {
-                        if (item.name && item.name.fa && item.name.fa.toLowerCase().includes(lowerQuery)) {
-                            let productInfo = `🛠️ ${item.name.fa}\n\n`;
-                            if (item.specifications && item.specifications.fa) {
-                                productInfo += `مشخصات فنی:\n`;
-                                item.specifications.fa.forEach(spec => {
-                                    productInfo += `• ${spec}\n`;
-                                });
-                            }
-                            return productInfo;
-                        }
-                    }
-                }
-            }
-            
-            // جستجو در ویژگی‌های کلیدی
-            if (jsonData.products_services.keyfeatures && jsonData.products_services.keyfeatures.fa) {
-                const matchingFeatures = jsonData.products_services.keyfeatures.fa.filter(feature => 
-                    feature.toLowerCase().includes(lowerQuery)
-                );
-                if (matchingFeatures.length > 0) {
-                    return `✨ ویژگی‌های محصولات:\n\n${matchingFeatures.map(feature => `• ${feature}`).join('\n')}`;
-                }
-            }
-        }
-
-        // جستجو در مشخصات فنی
-        if (jsonData.technical_specs) {
-            if (jsonData.technical_specs.materials && jsonData.technical_specs.materials.fa) {
-                const matchingMaterials = jsonData.technical_specs.materials.fa.filter(material => 
-                    material.toLowerCase().includes(lowerQuery)
-                );
-                if (matchingMaterials.length > 0) {
-                    return `🔩 مواد قابل جوش:\n\n${matchingMaterials.map(material => `• ${material}`).join('\n')}`;
-                }
-            }
-            
-            if (jsonData.technical_specs.lasersources && jsonData.technical_specs.lasersources.fa) {
-                const matchingSources = jsonData.technical_specs.lasersources.fa.filter(source => 
-                    source.toLowerCase().includes(lowerQuery)
-                );
-                if (matchingSources.length > 0) {
-                    return `⚡ منابع لیزری:\n\n${matchingSources.map(source => `• ${source}`).join('\n')}`;
-                }
-            }
-        }
-
-        // جستجو در کاربردها
-        if (jsonData.products_services?.applications?.fa) {
-            const matchingApps = jsonData.products_services.applications.fa.filter(app => 
-                app.toLowerCase().includes(lowerQuery)
-            );
-            if (matchingApps.length > 0) {
-                return `🏭 کاربردها:\n\n${matchingApps.map(app => `• ${app}`).join('\n')}`;
-            }
-        }
-
-        console.log("❌ هیچ نتیجه‌ای در JSON یافت نشد");
-        return null;
-
-    } catch (error) {
-        console.error("❌ خطا در جستجوی JSON:", error);
-        return null;
+        const res = await fetch('/data/data.json');
+        if (!res.ok) throw new Error("داده‌ها بارگذاری نشد");
+        jsonData = await res.json();
+        console.log("✅ JSON بارگذاری شد", jsonData);
+    } catch(e) {
+        console.error("❌ خطا در بارگذاری JSON:", e);
+        jsonData = null;
     }
 }
 
-// بهبود پاسخ با هوش مصنوعی
-async function enhanceWithAI(baseResponse, userQuestion, lang) {
-    try {
-        const prompt = `
-        شما یک بازاریاب و فروشنده حرفه‌ای برای شرکت "نوین صنعت پرتو گستر وندا" هستید.
-        
-        پاسخ پایه از داده‌های شرکت: ${baseResponse}
-        سوال کاربر: ${userQuestion}
-        
-        لطفاً پاسخ فوق را به صورت حرفه‌ای، جذاب و فروشنده‌ای بازنویسی کنید. 
-        از جملات تشویقی استفاده کنید اما از علائم مارک‌داون مانند  و ## استفاده نکنید.
-        اطلاعات فنی را تغییر ندهید، فقط حالت بیان را بهبود بخشید.
-        در پایان کاربر را به تماس با شرکت تشویق کنید.
-        پاسخ نهایی باید به زبان ${lang === 'fa' ? 'فارسی' : 'انگلیسی'} باشد.
-        `;
-
-        const response = await fetch("https://api.gapgpt.app/v1/chat/completions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GAP_TOKEN}` },
-            body: JSON.stringify({
-                model: "gpt-4o",
-                messages: [{ role: "user", content: prompt }],
-                max_tokens: 500
-            })
-        });
-        
-        const data = await response.json();
-        return data.choices?.[0]?.message?.content || baseResponse;
-        
-    } catch (error) {
-        console.error("Error enhancing response:", error);
-        return baseResponse;
-    }
+// هشدار و بلاک
+function checkRestrictedContent(text){
+    const restrictedPatterns = [
+        /(کد|برنامه|تبدیل|محاسبه|run|code)/i,
+        /(جوک|داستان|شعر|عاشقانه|حوصله|روانشناسی|پزشکی|حقوقی|تحصیلی)/i,
+        /(فال|پیش‌بینی|فلسفی|دینی)/i,
+        /(دوست داشتن|عاشق|رابطه|زندگی شخصی)/i,
+        /(سیاست|ورزش|فیلم|موسیقی|افراد مشهور)/i,
+        /(هک|نفوذ|محرمانه|لینک مشکوک)/i
+    ];
+    return restrictedPatterns.some(p => p.test(text));
 }
-
-// توقف تایپینگ
-function stopTypingFunc() {
-    stopTyping = true;
-    if (typingInterval) {
-        clearInterval(typingInterval);
-        typingInterval = null;
-    }
-    isTyping = false;
-    typingIndicator.style.display = 'none';
-    
-    // بازگشت دکمه به حالت ارسال
-    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال</span>';
-    sendBtn.className = 'send-btn';
-    sendBtn.onclick = sendMessage;
-}
-
-// الگوهای محدود کننده
-const restrictedPatterns = [
-  /(کد|برنامه|تبدیل|محاسبه|run|code)/i,
-  /(جوک|داستان|شعر|عاشقانه|حوصله|روانشناسی|پزشکی|حقوقی|تحصیلی)/i,
-  /(فال|پیش‌بینی|فلسفی|دینی)/i,
-  /(دوست داشتن|عاشق|رابطه|زندگی شخصی)/i,
-  /(سیاست|ورزش|فیلم|موسیقی|افراد مشهور)/i,
-  /(هک|نفوذ|محرمانه|لینک مشکوک)/i
-];
-
-function checkRestrictedContent(text) { return restrictedPatterns.some(p => p.test(text)); }
 
 function checkBlockStatus() {
-  const blockData = JSON.parse(localStorage.getItem('blockData') || '{}');
-  if (blockData.expire && new Date(blockData.expire) > new Date()) return true;
-  localStorage.removeItem('blockData');
-  return false;
+    const blockData = JSON.parse(localStorage.getItem('blockData')|| '{}');
+    if(blockData.expire && new Date(blockData.expire) > new Date()) return true;
+    localStorage.removeItem('blockData');
+    return false;
 }
 
-function recordRestriction(lang) {
-  let count = parseInt(localStorage.getItem('restrictionCount') || '0') + 1;
-  localStorage.setItem('restrictionCount', count);
-  if (count >= RESTRICT_LIMIT) {
-    const expireDate = new Date();
-    expireDate.setHours(expireDate.getHours() + BLOCK_HOURS);
-    localStorage.setItem('blockData', JSON.stringify({ expire: expireDate }));
-    localStorage.setItem('restrictionCount', 0);
-  }
-  return count;
+function recordRestriction(){
+    let count = parseInt(localStorage.getItem('restrictionCount')|| '0') + 1;
+    localStorage.setItem('restrictionCount', count);
+    if(count >= RESTRICT_LIMIT){
+        const expire = new Date();
+        expire.setHours(expire.getHours() + BLOCK_HOURS);
+        localStorage.setItem('blockData', JSON.stringify({expire}));
+        localStorage.setItem('restrictionCount', 0);
+    }
+    return count;
 }
 
-function getWarningMessage(lang, count) {
-  const messages = {
-    fa: `هشدار: شما ${count} بار سوال خارج از حوزه پرسیده‌اید. ادامه دادن باعث مسدود شدن حساب شما به مدت ${BLOCK_HOURS} ساعت می‌شود.`,
-    en: `Warning: You have asked ${count} out-of-scope questions. Continuing will block your account for ${BLOCK_HOURS} hours.`,
-    ar: `تحذير: لقد طرحت ${count} أسئلة خارج النطاق. الاستمرار سيؤدي إلى حظر حسابك لمدة ${BLOCK_HOURS} ساعة.`
-  };
-  return messages[lang] || messages['en'];
+function getRestrictionMessage(lang){
+    const messages = {
+        fa: 'متاسفم، فقط در حوزه معرفی شرکت و محصولات پاسخگو هستم.',
+        en: 'Sorry, I only respond regarding company introduction, products, and services.',
+        ar: 'عذراً، أنا أجيب فقط حول الشركة ومنتجاتها وخدماتها.'
+    };
+    return messages[lang]||messages['en'];
 }
 
-function getRestrictionMessage(lang) {
-  const messages = {
-    fa: 'متاسفم، من فقط در زمینه معرفی شرکت، محصولات و خدمات آن پاسخگو هستم.\nلطفاً سوالات خود را در این حوزه مطرح کنید.',
-    en: 'Sorry, I only respond regarding company introduction, products, and services.\nPlease ask questions in this domain.',
-    ar: 'عذراً، أنا أجيب فقط حول الشركة، منتجاتها وخدماتها.\nيرجى طرح الأسئلة في هذا المجال.'
-  };
-  return messages[lang] || messages['en'];
+function getWarningMessage(lang, count){
+    const messages = {
+        fa: `هشدار: ${count} بار سوال خارج از حوزه پرسیده‌اید. ادامه باعث مسدود شدن ${BLOCK_HOURS} ساعت می‌شود.`,
+        en: `Warning: ${count} out-of-scope questions. Blocking ${BLOCK_HOURS} hours.`,
+        ar: `تحذير: ${count} أسئلة خارج النطاق. سيتم الحظر لمدة ${BLOCK_HOURS} ساعة.`
+    };
+    return messages[lang]||messages['en'];
 }
 
 // ارسال پیام
-userInput.addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    if (!isTyping) sendMessage();
-  }
+userInput.addEventListener("keydown", e=>{
+    if(e.key==="Enter"){e.preventDefault(); if(!isTyping) sendMessage();}
 });
+userInput.addEventListener("input", ()=>{sendBtn.disabled = userInput.value.trim() === ''});
 
-userInput.addEventListener("input", function() {
-  sendBtn.disabled = this.value.trim() === '';
-});
+async function sendMessage(){
+    if(isTyping) return;
+    const content = userInput.value.trim();
+    if(!content) return;
+    const lang = /[\u0600-\u06FF]/.test(content)? 'fa' : 'en';
 
-async function sendMessage() {
-  if (isTyping) return;
-  const content = userInput.value.trim();
-  if (!content) return;
-  const lang = detectLanguage(content);
+    if(checkBlockStatus()){
+        messages.push({role:"assistant", content: getRestrictionMessage(lang)+"\n⛔ شما مسدود شده‌اید", time: new Date().toLocaleTimeString()});
+        renderMessages(); userInput.value=""; return;
+    }
 
-  // بررسی وضعیت مسدودیت
-  if (checkBlockStatus()) {
-    const msg = getRestrictionMessage(lang) + '\n⛔ شما به مدت ' + BLOCK_HOURS + ' ساعت مسدود شده‌اید.';
-    messages.push({ role: "assistant", content: msg, time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) });
-    renderMessages();
-    userInput.value = "";
-    return;
-  }
+    if(checkRestrictedContent(content)){
+        const count = recordRestriction();
+        messages.push({role:"assistant", content:getRestrictionMessage(lang)+"\n"+getWarningMessage(lang,count), time: new Date().toLocaleTimeString()});
+        renderMessages(); userInput.value=""; return;
+    }
 
-  // بررسی محتوای محدود شده
-  if (checkRestrictedContent(content)) {
-    const count = recordRestriction(lang);
-    const warningMsg = getWarningMessage(lang, count);
-    const msg = getRestrictionMessage(lang) + '\n' + warningMsg;
-    messages.push({ role: "assistant", content: msg, time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) });
-    renderMessages();
-    userInput.value = "";
-    return;
-  }
+    messages.push({role:"user", content, time: new Date().toLocaleTimeString()});
+    renderMessages(); userInput.value="";
+    sendBtn.disabled = true; isTyping=true;
+    typingIndicator.style.display='block';
 
-  // اضافه کردن پیام کاربر
-  messages.push({ role: "user", content, time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) });
-  renderMessages();
-  userInput.value = "";
-  sendBtn.disabled = true;
-  typingIndicator.style.display = 'block';
-  stopTyping = false;
-  isTyping = true;
+    // جستجو در JSON
+    let reply = null;
+    if(jsonData) reply = searchJSON(content);
 
-  // تغییر دکمه به توقف
-  sendBtn.innerHTML = '<i class="fas fa-stop"></i><span>توقف</span>';
-  sendBtn.className = 'send-btn stop-btn';
-  sendBtn.onclick = stopTypingFunc;
+    if(reply){
+        await simulateTyping(reply);
+        return;
+    }
 
-  // جستجو در داده‌های JSON
-  const jsonReply = searchJSON(content, lang);
-  if (jsonReply) {
-    console.log("✅ پاسخ از JSON یافت شد");
-    // بهبود پاسخ با هوش مصنوعی
-    const enhancedReply = await enhanceWithAI(jsonReply, content, lang);
-    await simulateTyping(enhancedReply);
-    return;
-  }
-
-  console.log("🔍 پاسخ در JSON یافت نشد، استفاده از هوش مصنوعی...");
-
-  // استفاده از هوش مصنوعی برای سوالات عمومی
-  try {
-    const systemMessage = {
-      role: "system",
-      content: `شما دستیار فروش شرکت "نوین صنعت پرتو گستر وندا" هستید. 
-      این شرکت در زمینه تولید دستگاه‌های جوش و برش لیزری فعالیت می‌کند.
-      همیشه پاسخ‌های مفید، جذاب و فروشنده‌ای بدهید.
-      از کاربر به تماس با شرکت تشویق کنید.
-      شماره تماس: ۰۲۱-۹۱۰۹۷۰۹۷ و ۰۹۱۳۷۹۷۲۹۳۲
-      از علائم مارک‌داون مانند  و ## استفاده نکنید.`
-    };
-
-    const apiResponse = await fetch("https://api.gapgpt.app/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GAP_TOKEN}` },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        messages: [systemMessage, ...messages.map(({ role, content }) => ({ role, content }))],
-        max_tokens: 500
-      })
-    });
-    const data = await apiResponse.json();
-    let reply = data.choices?.[0]?.message?.content || (lang === 'fa' ? 'پاسخ نامشخص دریافت شد.' : 'Unknown response received.');
-    await simulateTyping(reply);
-  } catch (err) {
-    console.error("❌ خطا در ارتباط با هوش مصنوعی:", err);
-    await simulateTyping(lang === 'fa' ? 'خطا در اتصال یا اعتبار توکن.' : 'Token error or connection failed.');
-  } finally {
-    // بازگشت دکمه به حالت ارسال
-    sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال</span>';
-    sendBtn.className = 'send-btn';
-    sendBtn.onclick = sendMessage;
-    sendBtn.disabled = false;
-  }
+    // درخواست به API امن chat.php
+    try{
+        const res = await fetch('/api/chat.php',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({message: content})
+        });
+        const data = await res.json();
+        await simulateTyping(data.reply||'پاسخ دریافت نشد.');
+    } catch(err){
+        console.error(err);
+        await simulateTyping('❌ خطا در ارتباط با سرور.');
+    }
 }
 
 // شبیه‌سازی تایپ
-async function simulateTyping(text) {
-  // حذف علائم مارک‌داون از متن
-  text = text.replace(/\\(.?)\\/g, '$1').replace(/\#\#(.?)\n/g, '$1\n');
-  
-  messages.push({ role: "assistant", content: "", time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) });
-  renderMessages();
-  let i = 0;
-  return new Promise(resolve => {
-    typingInterval = setInterval(() => {
-      if (stopTyping || i >= text.length) {
-        clearInterval(typingInterval);
-        typingIndicator.style.display = 'none';
-        isTyping = false;
-        renderMessages();
-        
-        // بازگشت دکمه به حالت ارسال
-        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال</span>';
-        sendBtn.className = 'send-btn';
-        sendBtn.onclick = sendMessage;
-        sendBtn.disabled = false;
-        
-        resolve();
-        return;
-      }
-      messages[messages.length - 1].content += text[i];
-      renderMessages();
-      i++;
-    }, 20);
-  });
+async function simulateTyping(text){
+    messages.push({role:"assistant", content:"", time: new Date().toLocaleTimeString()});
+    renderMessages();
+    let i=0;
+    return new Promise(resolve=>{
+        typingInterval = setInterval(()=>{
+            if(i>=text.length){clearInterval(typingInterval); isTyping=false; typingIndicator.style.display='none'; renderMessages(); resolve(); return;}
+            messages[messages.length-1].content+=text[i]; renderMessages(); i++;
+        },20);
+    });
 }
 
-// پیام خوش‌آمدگویی اولیه
-window.addEventListener('load', () => {
-  const welcomeMsg = { 
-    role: "assistant", 
-    content: "سلام! به دستیار هوشمند شرکت نوین صنعت پرتو گستر وندا خوش آمدید!\n\nدر حال بارگذاری اطلاعات شرکت...", 
-    time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) 
-  };
-  messages.push(welcomeMsg);
-  renderMessages();
-  
-  // بارگذاری داده‌های JSON پس از لود صفحه
-  setTimeout(() => {
-    loadJSON();
-  }, 1000);
+// نمایش پیام‌ها
+function renderMessages(){
+    chatBox.innerHTML='';
+    messages.forEach((msg,index)=>{
+        const div=document.createElement("div");
+        div.className=`message ${msg.role==="user"?"user":"assistant"}`;
+        div.style.animationDelay=`${index*0.1}s`;
+        div.innerHTML=msg.content.replace(/\n/g,'<br>')+`<span class="msg-time">${msg.time||''}</span>`;
+        chatBox.appendChild(div);
+    });
+    chatBox.scrollTo({top: chatBox.scrollHeight, behavior:'smooth'});
+}
+
+// جستجو در JSON
+function searchJSON(query){
+    if(!jsonData) return null;
+    const q=query.toLowerCase();
+    if(jsonData.company?.name?.fa?.toLowerCase().includes(q)) return jsonData.company.name.fa+" - "+jsonData.company.description?.fa;
+    return null;
+}
+
+// باز و بسته کردن چت
+function toggleChat(){chatContainer.style.display==='flex'?closeChat():openChat();}
+function openChat(){chatContainer.style.display='flex'; chatToggleBtn.classList.add('active'); userInput.focus();}
+function closeChat(){chatContainer.style.display='none'; chatToggleBtn.classList.remove('active');}
+
+// تماس با سازنده
+function callCreator(){window.location.href="tel:09211243320";}
+
+// تغییر تم
+function toggleTheme(){
+    const t=chatContainer.getAttribute('data-theme')==='dark'?'light':'dark';
+    chatContainer.setAttribute('data-theme',t); localStorage.setItem('chat-theme',t);
+}
+chatContainer.setAttribute('data-theme',localStorage.getItem('chat-theme')||'light');
+
+// پیام خوش‌آمدگویی و بارگذاری JSON
+window.addEventListener('load',()=>{
+    messages.push({role:"assistant", content:"سلام! در حال بارگذاری اطلاعات شرکت...", time:new Date().toLocaleTimeString()});
+    renderMessages();
+    setTimeout(loadJSON,1000);
 });
 </script>
 </body>
