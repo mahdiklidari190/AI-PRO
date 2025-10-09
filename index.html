@@ -129,36 +129,6 @@ const stopMessage=()=>{stopTyping=true;};
 function callCreator(){window.location.href="tel:09211243320";}
 userInput.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();sendMessage();}});
 
-// Search JSON
-function searchJSON(query, lang){
-  if(!jsonData) return null;
-  query = query.toLowerCase();
-  // company name
-  if(jsonData.company.name.toLowerCase().includes(query)){
-    let text = `نام شرکت: ${jsonData.company.name}\nتلفن‌ها: ${jsonData.company.phones.join(', ')}\nآدرس دفتر: ${jsonData.company.addresses.office}\nساعت کاری: ${jsonData.company.working_hours}`;
-    if(lang!=='fa') text = translateToEnglish(text);
-    return text;
-  }
-  // pages
-  for(const page of jsonData.pages){
-    if(page.title.toLowerCase().includes(query) || (page.summary && page.summary.toLowerCase().includes(query))){
-      let text = `${page.title}\n${page.summary||''}`;
-      if(page.items) text+='\nموارد: '+page.items.map(i=>i.title).join(', ');
-      if(lang!=='fa') text=translateToEnglish(text);
-      return text;
-    }
-    if(page.products){
-      let found = page.products.find(p=>p.title.toLowerCase().includes(query));
-      if(found){
-        let text = `محصول: ${found.title}\nلینک: ${found.url}`;
-        if(lang!=='fa') text=translateToEnglish(text);
-        return text;
-      }
-    }
-  }
-  return null;
-}
-
 // Dummy translation function for English output (simplified)
 function translateToEnglish(text){
   const mapping = {
@@ -171,60 +141,6 @@ function translateToEnglish(text){
   };
   for(const key in mapping) text = text.replaceAll(key, mapping[key]);
   return text;
-}
-
-// Send message
-async function sendMessage(){
-  const content = userInput.value.trim();
-  if(!content) return;
-  const timeStr = new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
-  messages.push({role:"user",content,time:timeStr});
-  renderMessages();
-  userInput.value="";
-
-  typingIndicator.style.display='block';
-  sendBtn.textContent='توقف';
-  sendBtn.onclick=()=>{stopTyping=true;};
-  stopTyping=false;
-
-  const lang = detectLanguage(content);
-
-  // JSON reply
-  const jsonReply = searchJSON(content, lang);
-  if(jsonReply){ await simulateTyping(jsonReply); return; }
-
-  // Normal chat with limits
-  try{
-    if(/(کد|برنامه|تبدیل|محاسبه|run|code)/i.test(content)){
-      const reply = lang==='fa'?'متاسفم، من محدود هستم و نمی‌توانم این کار را انجام دهم.':'Sorry, I am limited and cannot do that.';
-      await simulateTyping(reply);
-      return;
-    }
-
-    const apiResponse = await fetch("https://api.gapgpt.app/v1/chat/completions",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":"Bearer sk-qCiRXcAOS9sJKtxq7O3tKj8PUf32wzjTAXE8R1wTLEKD4PPa"
-      },
-      body:JSON.stringify({
-        model:"gpt-4o",
-        messages:messages.map(({role,content})=>({role,content})),
-        max_tokens:400
-      })
-    });
-    const data = await apiResponse.json();
-    let reply = data.choices[0].message.content;
-
-    // Limit content outside chat
-    if(/(کد|برنامه|تبدیل|محاسبه|run|code)/i.test(content)){
-      reply = lang==='fa'?'متاسفم، من محدود هستم و نمی‌توانم این کار را انجام دهم.':'Sorry, I am limited and cannot do that.';
-    }
-
-    await simulateTyping(reply);
-  }catch(err){
-    await simulateTyping(lang==='fa'?'مشکلی پیش آمد، پاسخ دریافت نشد.':'An error occurred, no response received.');
-  }
 }
 
 // Simulate typing
@@ -247,6 +163,60 @@ async function simulateTyping(text){
       i++;
     },30);
   });
+}
+
+// Send message
+async function sendMessage(){
+  const content = userInput.value.trim();
+  if(!content) return;
+  const timeStr = new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+  messages.push({role:"user",content,time:timeStr});
+  renderMessages();
+  userInput.value="";
+
+  typingIndicator.style.display='block';
+  sendBtn.textContent='توقف';
+  sendBtn.onclick=()=>{stopTyping=true;};
+  stopTyping=false;
+
+  const lang = detectLanguage(content);
+
+  // === بررسی محصولات JSON قبل از چت آزاد ===
+  if (jsonData) {
+    let productMatch = null;
+    for (const page of jsonData.pages) {
+      if (page.products) {
+        productMatch = page.products.find(p => content.toLowerCase().includes(p.title.toLowerCase()));
+        if (productMatch) break;
+      }
+    }
+    if (productMatch) {
+      const reply = `اگر دنبال ${productMatch.title} هستید، می‌توانید این محصول را از شرکت ما تهیه کنید:\nلینک خرید: ${productMatch.url}`;
+      await simulateTyping(reply);
+      return; // جلوگیری از ارسال پیام به GPT
+    }
+  }
+
+  // === ادامه چت آزاد با GPT ===
+  try{
+    const apiResponse = await fetch("https://api.gapgpt.app/v1/chat/completions",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer sk-qCiRXcAOS9sJKtxq7O3tKj8PUf32wzjTAXE8R1wTLEKD4PPa"
+      },
+      body:JSON.stringify({
+        model:"gpt-4o",
+        messages:messages.map(({role,content})=>({role,content})),
+        max_tokens:400
+      })
+    });
+    const data = await apiResponse.json();
+    let reply = data.choices[0].message.content;
+    await simulateTyping(reply);
+  }catch(err){
+    await simulateTyping(lang==='fa'?'مشکلی پیش آمد، پاسخ دریافت نشد.':'An error occurred, no response received.');
+  }
 }
 </script>
 </body>
