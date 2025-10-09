@@ -1,101 +1,406 @@
 {
-  "meta": {
-    "source": "https://www.nspvco.com",
-    "generated_at": "2025-10-09T00:00:00Z",
-    "version": "1.0",
-    "note": "این JSON از محتوای صفحهٔ اصلی سایت استخراج شده؛ برای جزئیات محصولات صفحات اختصاصی را اسکرپ کنید."
-  },
   "company": {
-    "name": "شرکت نوین صنعت پرتوگستر وندا",
-    "phones": [
-      "03191097097",
-      "09137324875",
-      "09137972932"
-    ],
-    "addresses": {
-      "office": "اصفهان، منطقه صنعتی دولت آباد، بلوار امام خمینی، خیابان نشاط اصفهانی(18)،انتهای فاز اول، پلاک96، طبقه دوم",
-      "factory": "اصفهان، منطقه صنعتی دولت آباد، بلوار امام خمینی، خیابان نشاط اصفهانی(18)، پلاک 14"
+    "name": {
+      "fa": "شرکت نوین صنعت پرتو گستر وندا",
+      "en": "Novin Sanat Parto Gostar Vanda Co.",
+      "ar": "شركة نوفين صناعة برتو غوستار فاندا",
+      "es": "Novin Sanat Parto Gostar Vanda Cía.",
+      "fr": "Société Novin Sanat Parto Gostar Vanda",
+      "de": "Novin Sanat Parto Gostar Vanda GmbH",
+      "zh": "诺温工业帕尔托戈斯塔尔万达公司",
+      "ru": "Компания Новин Санат Парто Гостар Ванда",
+      "ja": "ノビン・サナット・パルト・ゴスター・ヴァンダ社",
+      "hi": "नोविन सनात पार्टो गोस्तर वंडा कंपनी",
+      "tr": "Novin Sanat Parto Gostar Vanda Şti.",
+      "pt": "Novin Sanat Parto Gostar Vanda Cia.",
+      "it": "Novin Sanat Parto Gostar Vanda Srl",
+      "ko": "노빈 사나트 파르토 고스타르 반다 회사"
     },
-    "working_hours": "شنبه تا چهارشنبه 7:30 الی 17 (پنجشنبه‌ها تعطیل)",
-    "copyright": "تمام حقوق مادی و معنوی این سایت متعلق به شرکت نوین صنعت پرتوگستر وندا می باشد."
-  },
-  "pages": [
-    {
-      "id": "home",
-      "url": "https://www.nspvco.com/",
-      "title": "صفحهٔ نخست",
-      "summary": "شرکت نوین صنعت پرتوگستر وندا — تولیدکننده دستگاه جوش لیزری، تمیزکننده لیزری، برش لیزری و قطعات مرتبط.",
-      "content_snippet": "جمعی از فارغ التحصیلان دانشگاه شهید بهشتی در رشته لیزر پس از چهارده سال تجربه این شرکت را تأسیس کردند. کیفیت تضمینی، گارانتی یک ساله، آموزش و راه‌اندازی و خدمات پس از فروش ارائه می‌شود.",
-      "tags": ["home", "company", "overview"]
+    "description": {
+      "fa": "شرکت فناور و دانش بنیان فعال در زمینه تولید دستگاه های جوش و برش لیزری",
+      "en": "Knowledge-based technology company specializing in laser welding and cutting machines",
+      "ar": "شركة تكنولوجيا قائمة على المعرفة متخصصة في آلات اللحام والقطع بالليزر",
+      "es": "Empresa de tecnología basada en el conocimiento especializada en máquinas de soldadura y corte láser",
+      "fr": "Société de technologie basée sur la connaissance spécialisée dans les machines de soudage et découpe laser",
+      "de": "Wissensbasiertes Technologieunternehmen, spezialisiert auf Laserschweiß- und Schneidmaschinen",
+      "zh": "专注于激光焊接和切割机器的知识型科技公司",
+      "ru": "Научно-технологическая компания, специализирующаяся на лазерных сварочных и режущих машинах",
+      "ja": "レーザー溶接・切断機械に特化した知識ベースのテクノロジー企業",
+      "hi": "ज्ञान-आधारित प्रौद्योगिकी कंपनी जो लेजर वेल्डिंग और कटिंग मशीनों में विशेषज्ञता रखती है",
+      "tr": "Lazer kaynak ve kesme makinelerinde uzmanlaşmış bilgi tabanlı teknoloji şirketi",
+      "pt": "Empresa de tecnologia baseada no conhecimento especializada em máquinas de solda e corte a laser",
+      "it": "Società tecnologica basata sulla conoscenza specializzata in macchine per saldatura e taglio laser",
+      "ko": "레이저 용접 및 절단 기계에 특화된 지식 기반 기술 회사"
     },
-    {
-      "id": "products-overview",
-      "url": "https://www.nspvco.com/",
-      "title": "محصولات وندا (دسته‌بندی‌ها)",
-      "summary": "دستگاه جوش لیزری، دستگاه تمیزکننده لیزری، دستگاه برش لیزری، قطعات یدکی، سورس لیزر فایبر، هد لیزر، لنز، نازل، چیلر، وایر فیدر، عینک جوش لیزر، روتاری و ...",
-      "items": [
-        {"slug":"laser-welding","title":"دستگاه جوش لیزری","url":"https://www.nspvco.com/#products"},
-        {"slug":"laser-cleaner","title":"دستگاه تمیزکننده لیزری","url":"https://www.nspvco.com/#products"},
-        {"slug":"laser-cutting","title":"دستگاه برش لیزری","url":"https://www.nspvco.com/#products"},
-        {"slug":"spare-parts","title":"قطعات یدکی دستگاه جوش لیزر","url":"https://www.nspvco.com/#products"},
-        {"slug":"fiber-source","title":"سورس لیزر فایبر","url":"https://www.nspvco.com/#products"},
-        {"slug":"laser-head","title":"هد دستگاه لیزر","url":"https://www.nspvco.com/#products"}
-      ],
-      "tags": ["products", "catalog"]
+    "established": "1400 (2021 AD)",
+    "founders": {
+      "fa": "متخصصان با 10 سال سابقه در صنایع اپتیک از پژوهشکده لیزر و فوتونیک دانشگاه شهید بهشتی",
+      "en": "Specialists with 10 years experience in optics industry from Laser and Photonics Research Institute of Shahid Beheshti University"
     },
-    {
-      "id": "top-products",
-      "url": "https://www.nspvco.com/",
-      "title": "پرفروش‌ترین محصولات",
-      "products": [
-        {"id":"vhlw-1000","title":"دستگاه جوش لیزری وندا مدل VHLW-1000","url":"https://www.nspvco.com/"},
-        {"id":"gantry","title":"دستگاه جوش لیزری گانتری (دروازه‌ای)","url":"https://www.nspvco.com/"},
-        {"id":"auto-5-axis","title":"دستگاه جوش لیزری اتوماتیک 5 محور","url":"https://www.nspvco.com/"},
-        {"id":"twb","title":"دستگاه جوش لیزری TWB","url":"https://www.nspvco.com/"}
-      ],
-      "tags": ["products", "top-sellers"]
-    },
-    {
-      "id": "events",
-      "url": "https://www.nspvco.com/",
-      "title": "آخرین رویدادها و نمایشگاه‌ها",
-      "items": [
-        {"title":"پنجمین نمایشگاه صنعت و ابزار تهران","date_sh":"مهر 13, 1404"},
-        {"title":"بیستمین نمایشگاه صنعت اصفهان","date_sh":"مرداد 22, 1404"},
-        {"title":"بیست و هشتمین نمایشگاه نفت، گاز، پالایش، پتروشیمی","date_sh":"اردیبهشت 21, 1404"},
-        {"title":"نمایشگاه صنعت تهران 1403","date_sh":"آبان 19, 1403"}
-      ],
-      "tags": ["events", "exhibitions"]
-    },
-    {
-      "id": "certifications",
-      "url": "https://www.nspvco.com/",
-      "title": "گواهی‌ها و مجوزها",
-      "items": [
-        "پروانه بهره برداری سازمان",
-        "پروانه سازمان انرژی اتمی",
-        "گواهی نمایندگی QILIN",
-        "گواهی نمایندگی GW",
-        "گواهی انطباق استاندارد"
-      ],
-      "tags": ["certificates", "licenses"]
-    },
-    {
-      "id": "contact",
-      "url": "https://www.nspvco.com/contact",
-      "title": "تماس با ما",
-      "summary": "شماره‌ها و آدرس دفتر مرکزی و کارخانه، لینک شبکه‌های اجتماعی و فرم تماس در سایت.",
-      "phones": [
-        "03191097097",
-        "09137324875",
-        "09137972932"
-      ],
-      "social": {
-        "instagram": "https://www.instagram.com",
-        "whatsapp": "https://api.whatsapp.com",
-        "telegram": "https://t.me"
+    "location": {
+      "headquarters": {
+        "fa": "اصفهان، منطقه صنعتی دولت آباد",
+        "en": "Isfahan, Dowlat Abad Industrial Estate"
       },
-      "tags": ["contact", "support"]
+      "address": {
+        "fa": "اصفهان، منطقه صنعتی دولت آباد، بلوار امام خمینی، خیابان نشاط اصفهانی (۱۸)، پلاک ۱۴",
+        "en": "Isfahan, Dowlat Abad Industrial Estate, Imam Khomeini Blvd, Neshat Esfahani St. (18), No. 14"
+      }
+    },
+    "contact": {
+      "website": "https://www.nspvco.com",
+      "phone": ["09137972932", "021-91097097"],
+      "email": "info@nspvco.com"
+    },
+    "social_media": {
+      "instagram": "nspv_co",
+      "telegram": "nspvco"
     }
-  ]
+  },
+  "products_services": {
+    "main_products": [
+      {
+        "category": "جوش لیزری",
+        "items": [
+          {
+            "name": {
+              "fa": "دستگاه جوش لیزری دستی",
+              "en": "Handheld Laser Welding Machine",
+              "ar": "آلة اللحام بالليزر اليدوية",
+              "es": "Máquina de soldadura láser de mano",
+              "fr": "Machine de soudage laser manuelle",
+              "de": "Handgeführte Laserschweißmaschine",
+              "zh": "手持式激光焊接机",
+              "ru": "Ручной лазерный сварочный аппарат",
+              "ja": "手持式レーザー溶接機",
+              "hi": "हैंडहेल्ड लेजर वेल्डिंग मशीन"
+            },
+            "specifications": {
+              "fa": ["قدرت: 1000-2000 وات", "عمق جوش: تا 5 میلیمتر", "منبع انرژی: فایبر لیزر"],
+              "en": ["Power: 1000-2000W", "Weld depth: up to 5mm", "Energy source: Fiber laser"],
+              "ar": ["القوة: 1000-2000 واط", "عمق اللحام: حتى 5 ملم", "مصدر الطاقة: ليزر الألياف"],
+              "es": ["Potencia: 1000-2000W", "Profundidad de soldadura: hasta 5mm", "Fuente de energía: Láser de fibra"],
+              "fr": ["Puissance: 1000-2000W", "Profondeur de soudure: jusqu'à 5mm", "Source d'énergie: Laser à fibre"],
+              "de": ["Leistung: 1000-2000W", "Schweißtiefe: bis zu 5mm", "Energiequelle: Faserlaser"],
+              "zh": ["功率: 1000-2000W", "焊接深度: 最高5mm", "能源: 光纤激光器"],
+              "ru": ["Мощность: 1000-2000Вт", "Глубина сварки: до 5мм", "Источник энергии: Волоконный лазер"],
+              "ja": ["出力: 1000-2000W", "溶接深さ: 最大5mm", "エネルギー源: ファイバーレーザー"],
+              "hi": ["पावर: 1000-2000W", "वेल्ड गहराई: 5mm तक", "ऊर्जा स्रोत: फाइबर लेजर"]
+            }
+          },
+          {
+            "name": {
+              "fa": "دستگاه جوش لیزری اتوماتیک 4 محوره",
+              "en": "4-Axis Automatic Laser Welding Machine",
+              "ar": "آلة اللحام بالليزر الأوتوماتيكية 4 محاور",
+              "es": "Máquina de soldadura láser automática de 4 ejes",
+              "fr": "Machine de soudage laser automatique 4 axes",
+              "de": "4-Achsen Automatische Laserschweißmaschine",
+              "zh": "4轴自动激光焊接机",
+              "ru": "4-осевой автоматический лазерный сварочный аппарат",
+              "ja": "4軸自動レーザー溶接機",
+              "hi": "4-अक्ष ऑटोमैटिक लेजर वेल्डिंग मशीन"
+            }
+          },
+          {
+            "name": {
+              "fa": "دستگاه جوش لیزری اتوماتیک 6 محوره",
+              "en": "6-Axis Automatic Laser Welding Machine",
+              "ar": "آلة اللحام بالليزر الأوتوماتيكية 6 محاور",
+              "es": "Máquina de soldadura láser automática de 6 ejes",
+              "fr": "Machine de soudage laser automatique 6 axes",
+              "de": "6-Achsen Automatische Laserschweißmaschine",
+              "zh": "6轴自动激光焊接机",
+              "ru": "6-осевой автоматический лазерный сварочный аппарат",
+              "ja": "6軸自動レーザー溶接機",
+              "hi": "6-अक्ष ऑटोमैटिक लेजर वेल्डिंग मशीन"
+            }
+          }
+        ]
+      },
+      {
+        "category": "برش لیزری",
+        "items": [
+          {
+            "name": {
+              "fa": "دستگاه برش لیزری فایبر",
+              "en": "Fiber Laser Cutting Machine",
+              "ar": "آلة القطع بالليزر الألياف",
+              "es": "Máquina de corte por láser de fibra",
+              "fr": "Machine de découpe laser à fibre",
+              "de": "Faserlaserschneidmaschine",
+              "zh": "光纤激光切割机",
+              "ru": "Волоконная лазерная режущая машина",
+              "ja": "ファイバーレーザー切断機",
+              "hi": "फाइबर लेजर कटिंग मशीन"
+            }
+          }
+        ]
+      },
+      {
+        "category": "تمیزکاری لیزری",
+        "items": [
+          {
+            "name": {
+              "fa": "دستگاه تمیزکاری لیزری",
+              "en": "Laser Cleaning Machine",
+              "ar": "آلة التنظيف بالليزر",
+              "es": "Máquina de limpieza láser",
+              "fr": "Machine de nettoyage laser",
+              "de": "Laserreinigungsmaschine",
+              "zh": "激光清洗机",
+              "ru": "Лазерная очистительная машина",
+              "ja": "レーザー洗浄機",
+              "hi": "लेजर क्लीनिंग मशीन"
+            }
+          }
+        ]
+      }
+    ],
+    "key_features": {
+      "fa": [
+        "جوش عمیق و باریک بسیار تمیز",
+        "سرعت جوشکاری بالا",
+        "کاهش مصرف انرژی تا 80٪",
+        "قابلیت جوش فلزات مختلف بدون مواد پرکننده",
+        "دقت بالا و تغییر شکل کم"
+      ],
+      "en": [
+        "Very clean deep and narrow welding",
+        "High welding speed",
+        "Energy consumption reduction up to 80%",
+        "Ability to weld different metals without filler materials",
+        "High precision and low deformation"
+      ],
+      "ar": [
+        "لحام عميق وضيق ونظيف جداً",
+        "سرعة لحام عالية",
+        "تقليل استهلاك الطاقة حتى 80٪",
+        "القدرة على لحام المعادن المختلفة بدون مواد حشو",
+        "دقة عالية وتشوه منخفض"
+      ],
+      "es": [
+        "Soldadura profunda y estrecha muy limpia",
+        "Alta velocidad de soldadura",
+        "Reducción del consumo de energía hasta 80%",
+        "Capacidad de soldar diferentes metales sin materiales de relleno",
+        "Alta precisión y baja deformación"
+      ],
+      "fr": [
+        "Soudure profonde et étroite très propre",
+        "Haute vitesse de soudage",
+        "Réduction de la consommation d'énergie jusqu'à 80%",
+        "Capacité à souder différents métaux sans matériaux de remplissage",
+        "Haute précision et faible déformation"
+      ],
+      "de": [
+        "Sehr saubere tiefe und schmale Schweißnaht",
+        "Hohe Schweißgeschwindigkeit",
+        "Energieverbrauchsreduzierung bis zu 80%",
+        "Fähigkeit, verschiedene Metalle ohne Füllmaterialien zu schweißen",
+        "Hohe Präzision und geringe Verformung"
+      ],
+      "zh": [
+        "非常清洁的深而窄的焊接",
+        "高焊接速度",
+        "能耗降低高达80%",
+        "能够焊接不同金属而无需填充材料",
+        "高精度和低变形"
+      ],
+      "ru": [
+        "Очень чистый глубокий и узкий сварной шов",
+        "Высокая скорость сварки",
+        "Снижение энергопотребления до 80%",
+        "Возможность сварки различных металлов без присадочных материалов",
+        "Высокая точность и низкая деформация"
+      ],
+      "ja": [
+        "非常に清潔で深く狭い溶接",
+        "高速溶接",
+        "エネルギー消費量最大80%削減",
+        "充填材なしで異なる金属を溶接可能",
+        "高精度かつ低変形"
+      ],
+      "hi": [
+        "बहुत साफ गहरी और संकीर्ण वेल्डिंग",
+        "उच्च वेल्डिंग गति",
+        "80% तक ऊर्जा खपत में कमी",
+        "फिलर सामग्री के बिना विभिन्न धातुओं को वेल्ड करने की क्षमता",
+        "उच्च सटीकता और कम विरूपण"
+      ]
+    },
+    "applications": {
+      "fa": [
+        "صنعت خودرو سازی",
+        "صنایع نفت و گاز",
+        "صنایع غذایی و دارویی",
+        "ساخت و ساز و معماری",
+        "صنایع الکترونیک"
+      ],
+      "en": [
+        "Automotive industry",
+        "Oil and gas industries",
+        "Food and pharmaceutical industries",
+        "Construction and architecture",
+        "Electronics industries"
+      ],
+      "ar": [
+        "صناعة السيارات",
+        "صناعات النفط والغاز",
+        "الصناعات الغذائية والدوائية",
+        "البناء والعمارة",
+        "الصناعات الإلكترونية"
+      ],
+      "es": [
+        "Industria automotriz",
+        "Industrias de petróleo y gas",
+        "Industrias alimentarias y farmacéuticas",
+        "Construcción y arquitectura",
+        "Industrias electrónicas"
+      ],
+      "fr": [
+        "Industrie automobile",
+        "Industries pétrolières et gazières",
+        "Industries alimentaires et pharmaceutiques",
+        "Construction et architecture",
+        "Industries électroniques"
+      ],
+      "de": [
+        "Automobilindustrie",
+        "Öl- und Gasindustrie",
+        "Nahrungsmittel- und Pharmaindustrie",
+        "Bauwesen und Architektur",
+        "Elektronikindustrie"
+      ],
+      "zh": [
+        "汽车行业",
+        "石油和天然气行业",
+        "食品和制药行业",
+        "建筑和建筑行业",
+        "电子行业"
+      ],
+      "ru": [
+        "Автомобильная промышленность",
+        "Нефтегазовая промышленность",
+        "Пищевая и фармацевтическая промышленность",
+        "Строительство и архитектура",
+        "Электронная промышленность"
+      ],
+      "ja": [
+        "自動車産業",
+        "石油・ガス産業",
+        "食品・医薬品産業",
+        "建設・建築",
+        "電子産業"
+      ],
+      "hi": [
+        "ऑटोमोटिव उद्योग",
+        "तेल और गैस उद्योग",
+        "खाद्य और फार्मास्युटिकल उद्योग",
+        "निर्माण और वास्तुकला",
+        "इलेक्ट्रॉनिक्स उद्योग"
+      ]
+    }
+  },
+  "technical_specs": {
+    "laser_sources": {
+      "fa": ["فایبر لیزر", "ND:YAG لیزر"],
+      "en": ["Fiber Laser", "ND:YAG Laser"],
+      "ar": ["ليزر الألياف", "ليزر ND:YAG"],
+      "es": ["Láser de fibra", "Láser ND:YAG"],
+      "fr": ["Laser à fibre", "Laser ND:YAG"],
+      "de": ["Faserlaser", "ND:YAG-Laser"],
+      "zh": ["光纤激光器", "ND:YAG激光器"],
+      "ru": ["Волоконный лазер", "ND:YAG лазер"],
+      "ja": ["ファイバーレーザー", "ND:YAGレーザー"],
+      "hi": ["फाइबर लेजर", "ND:YAG लेजर"]
+    },
+    "materials": {
+      "fa": ["فولاد ضد زنگ", "آلومینیوم", "مس", "تیتانیوم", "فولاد کربنی"],
+      "en": ["Stainless Steel", "Aluminum", "Copper", "Titanium", "Carbon Steel"],
+      "ar": ["الفولاذ المقاوم للصدأ", "الألومنيوم", "النحاس", "التيتانيوم", "الفولاذ الكربوني"],
+      "es": ["Acero inoxidable", "Aluminio", "Cobre", "Titanio", "Acero al carbono"],
+      "fr": ["Acier inoxydable", "Aluminium", "Cuivre", "Titane", "Acier au carbone"],
+      "de": ["Edelstahl", "Aluminium", "Kupfer", "Titan", "Kohlenstoffstahl"],
+      "zh": ["不锈钢", "铝", "铜", "钛", "碳钢"],
+      "ru": ["Нержавеющая сталь", "Алюминий", "Медь", "Титан", "Углеродистая сталь"],
+      "ja": ["ステンレス鋼", "アルミニウム", "銅", "チタン", "炭素鋼"],
+      "hi": ["स्टेनलेस स्टील", "एल्युमिनियम", "तांबा", "टाइटेनियम", "कार्बन स्टील"]
+    },
+    "power_range": {
+      "fa": "500-3000 وات",
+      "en": "500-3000 Watts",
+      "ar": "500-3000 واط",
+      "es": "500-3000 Vatios",
+      "fr": "500-3000 Watts",
+      "de": "500-3000 Watt",
+      "zh": "500-3000 瓦特",
+      "ru": "500-3000 Ватт",
+      "ja": "500-3000 ワット",
+      "hi": "500-3000 वाट"
+    }
+  },
+  "credibility_indicators": {
+    "academic_background": {
+      "fa": "فارغ التحصیلان پژوهشکده لیزر و فوتونیک دانشگاه شهید بهشتی",
+      "en": "Graduates of Laser and Photonics Research Institute of Shahid Beheshti University"
+    },
+    "support": {
+      "fa": "پشتیبانی معاونت علمی و فناوری ریاست جمهوری",
+      "en": "Supported by Vice Presidency for Science and Technology"
+    },
+    "experience": {
+      "fa": "10 سال سابقه مؤسسان در صنایع اپتیک",
+      "en": "10 years of founders' experience in optics industry"
+    },
+    "warranty": {
+      "fa": "ارائه گارانتی و خدمات پس از فروش",
+      "en": "Warranty and after-sales service provided"
+    },
+    "production": {
+      "fa": "تولید داخلی (غیر وارداتی)",
+      "en": "Domestic production (non-imported)"
+    }
+  },
+  "business_info": {
+    "employees": "11-50 نفر",
+    "export": {
+      "fa": "قابلیت صادرات به کشورهای همسایه",
+      "en": "Export capability to neighboring countries"
+    },
+    "delivery_time": {
+      "fa": "30 تا 45 روز کاری",
+      "en": "30 to 45 business days"
+    },
+    "customization": {
+      "fa": "قابلیت سفارشی سازی بر اساس نیاز مشتری",
+      "en": "Customization capability based on customer needs"
+    }
+  },
+  "certifications": {
+    "fa": ["ISO 9001", "CE", "دانش بنیان"],
+    "en": ["ISO 9001", "CE", "Knowledge-Based"],
+    "ar": ["ISO 9001", "CE", "قائم على المعرفة"],
+    "es": ["ISO 9001", "CE", "Basado en el conocimiento"],
+    "fr": ["ISO 9001", "CE", "Basé sur la connaissance"],
+    "de": ["ISO 9001", "CE", "Wissensbasiert"],
+    "zh": ["ISO 9001", "CE", "知识型"],
+    "ru": ["ISO 9001", "CE", "Научно-обоснованный"],
+    "ja": ["ISO 9001", "CE", "知識ベース"],
+    "hi": ["ISO 9001", "CE", "ज्ञान-आधारित"]
+  },
+  "metadata": {
+    "data_sources": [
+      "وبسایت رسمی شرکت",
+      "خبرگزاری مهر",
+      "پلتفرم‌های استخدامی",
+      "شبکه‌های اجتماعی شرکت"
+    ],
+    "last_updated": "2024-01-20",
+    "data_confidence": "بالا",
+    "notes": {
+      "fa": "اطلاعات بر اساس داده‌های publicly available جمع‌آوری شده است",
+      "en": "Information collected based on publicly available data"
+    }
+  }
 }
