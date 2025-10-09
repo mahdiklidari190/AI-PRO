@@ -150,10 +150,10 @@ body {
 #chatContainer {
   display: none;
   position: fixed;
-  bottom: 90px;
+  bottom: 100px;
   left: 20px;
-  width: 400px;
-  height: 600px;
+  width: 380px;
+  height: 500px;
   background: white;
   border-radius: 20px;
   box-shadow: var(--shadow-light);
@@ -173,11 +173,17 @@ body {
 
 @media (max-width: 768px) {
   #chatContainer {
-    width: 100%;
-    height: 100%;
-    bottom: 0;
-    left: 0;
-    border-radius: 0;
+    width: calc(100% - 40px);
+    height: 70%;
+    bottom: 100px;
+    left: 20px;
+    right: 20px;
+    border-radius: 20px;
+  }
+  
+  .chat-toggle-btn {
+    bottom: 20px;
+    left: 20px;
   }
 }
 
@@ -480,7 +486,7 @@ button.stop-btn:hover:not(:disabled) {
 </head>
 <body data-theme="light">
 
-<!-- دکمه و پنجره چت -->
+<!-- دکمه و پنجره چت - حالا در پایین سمت چپ -->
 <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
   <div class="pulse-circle circle1"></div>
   <div class="pulse-circle circle2"></div>
