@@ -83,6 +83,7 @@ body {
 .chat-toggle-btn:hover {
   transform: scale(1.1) rotate(360deg);
   box-shadow: 0 15px 35px rgba(139, 92, 246, 0.4);
+  background: var(--success-color); /* تغییر به سبز در hover */
 }
 
 .chat-toggle-btn i {
@@ -94,6 +95,10 @@ body {
 
 .chat-toggle-btn.active {
   background: var(--success-color);
+}
+
+.chat-toggle-btn.active:hover {
+  background: var(--success-color); /* حفظ سبز در hover وقتی active */
 }
 
 .pulse-circle {
@@ -200,19 +205,35 @@ body {
   background: var(--bg-dark);
 }
 
+/* بهبود ریسپانسیو برای موبایل و دسکتاپ */
 @media (max-width: 768px) {
   #chatContainer {
     width: calc(100% - 40px);
-    height: 70%;
+    height: 70vh; /* استفاده از vh برای ارتفاع بهتر */
     bottom: 100px;
     left: 20px;
     right: 20px;
+    margin: 0 auto; /* مرکز کردن در موبایل */
     border-radius: 20px;
   }
   
   .chat-toggle-btn {
     bottom: 20px;
     left: 20px;
+  }
+}
+
+@media (min-width: 769px) {
+  #chatContainer {
+    width: 400px; /* کمی بزرگ‌تر برای دسکتاپ */
+    height: 600px; /* ارتفاع بیشتر برای دسکتاپ */
+    bottom: 100px;
+    left: 20px;
+  }
+
+  /* hover فقط برای دسکتاپ فعال است، چون موبایل hover ندارد */
+  .chat-toggle-btn:hover {
+    background: var(--success-color);
   }
 }
 
