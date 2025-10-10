@@ -195,16 +195,16 @@ body {
   left: 20px;
   width: 380px;
   height: 500px;
-  background: rgba(255, 255, 255, 0.0); /* کاملاً شفاف */
+  background: transparent; /* شفاف واقعی */
   border-radius: 20px;
-  box-shadow: var(--shadow-light);
+  box-shadow: none; /* حذف سایه */
   overflow: hidden;
   z-index: 1000;
   flex-direction: column;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
   transform: translateY(20px);
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); حذف شد */
 }
 
 #chatContainer.show {
